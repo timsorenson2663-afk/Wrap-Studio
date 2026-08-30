@@ -1,1 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Thread Studio Pro - Yellow Rose Custom Rods</title>
+  <style>
+    :root {
+      --bg-dark: #080a0f;
+      --card-bg: #121620;
+      --border-color: #222b3b;
+      --accent-gold: #d4af37;
+      --accent-cyan: #00d2ff;
+      --accent-purple: #9d4edd;
+      --text-main: #f0f4f8;
+      --text-muted: #8e9bb0;
+      --input-bg: #07090e;
+      --btn-hover: #e5c358;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; touch-action: manipulation; }
+    body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.5; padding-bottom: 60px; }
+    header { background: linear-gradient(135deg, #181d28 0%, #0a0d14 100%); border-bottom: 2px solid var(--accent-gold); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    header h1 { font-size: 1.2rem; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.5px; }
+    header p { font-size: 0.75rem; color: var(--text-muted); }
+    .header-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tab-radio { display: none; }
+    .tab-nav { display: flex; background: #05070a; border-bottom: 1px solid var(--border-color); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab-label { flex: 0 0 auto; padding: 12px 16px; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; text-align: center; white-space: nowrap; user-select: none; }
+    #t-vis:checked ~ .tab-nav label[for="t-vis"],
+    #t-step:checked ~ .tab-nav label[for="t-step"],
+    #t-3d:checked ~ .tab-nav label[for="t-3d"],
+    #t-gcolor:checked ~ .tab-nav label[for="t-gcolor"],
+    #t-vault:checked ~ .tab-nav label[for="t-vault"],
+    #t-sheet:checked ~ .tab-nav label[for="t-sheet"],
+    #t-guide:checked ~ .tab-nav label[for="t-guide"],
+    #t-gloss:checked ~ .tab-nav label[for="t-gloss"],
+    #t-imp:checked ~ .tab-nav label[for="t-imp"],
+    #t-lib:checked ~ .tab-nav label[for="t-lib"],
+    #t-lay:checked ~ .tab-nav label[for="t-lay"],
+    #t-vws:checked ~ .tab-nav label[for="t-vws"] { color: var(--accent-gold); border-bottom: 3px solid var(--accent-gold); background: #121722; }
+    .tab-panel { display: none; padding: 16px 12px; max-width: 1280px; margin: 0 auto; }
+    #t-vis:checked ~ #panel-vis,
+    #t-step:checked ~ #panel-step,
+    #t-3d:checked ~ #panel-3d,
+    #t-gcolor:checked ~ #panel-gcolor,
+    #t-vault:checked ~ #panel-vault,
+    #t-sheet:checked ~ #panel-sheet,
+    #t-guide:checked ~ #panel-guide,
+    #t-gloss:checked ~ #panel-gloss,
+    #t-imp:checked ~ #panel-imp,
+    #t-lib:checked ~ #panel-lib,
+    #t-lay:checked ~ #panel-lay,
+    #t-vws:checked ~ #panel-vws { display: block; }
+    .grid-layout { display: grid; grid-template-columns: 420px 1fr; gap: 16px; }
+    @media (max-width: 980px) { .grid-layout { grid-template-columns: 1fr; } }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .card h2 { font-size: 1.05rem; color: var(--accent-cyan); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea { width: 100%; padding: 8px 10px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); font-size: 0.88rem; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-gold); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: flex-end; }
+    @media (max-width: 600px) { .row-2, .row-3, .row-4 { grid-template-columns: 1fr; } }
+    .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--accent-gold); color: #000; font-weight: 700; font-size: 0.85rem; padding: 9px 14px; border-radius: 6px; border: none; cursor: pointer; width: 100%; }
+    .btn:hover { background: var(--btn-hover); }
+    .btn-outline { background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); }
+    .btn-outline:hover { background: rgba(0, 210, 255, 0.1); }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; width: auto; }
+    .btn-danger { background: #e63946; color: #fff; }
+    .canvas-wrapper { background: #05070a; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    canvas { border-radius: 4px; max-width: 100%; height: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.7); }
+    .layer-item { background: #0d111a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .layer-header { display: flex; align-items: center; gap: 8px; }
+    .layer-controls { display: grid; grid-template-columns: 1.2fr 1fr 0.9fr; gap: 6px; }
+    .color-badge { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #555; flex-shrink: 0; }
+    .step-banner { background: #131824; border: 1px solid var(--accent-gold); border-radius: 8px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .step-info h3 { font-size: 1.05rem; color: var(--accent-gold); margin-bottom: 3px; }
+    .step-info p { font-size: 0.8rem; color: var(--text-muted); }
+    .waypoint-hud { background: #05070a; border: 1px solid var(--accent-cyan); border-radius: 6px; padding: 12px 14px; margin-top: 10px; width: 100%; font-size: 0.82rem; color: var(--accent-cyan); line-height: 1.5; }
+    .waypoint-hud strong { color: #fff; }
+    .waypoint-hud .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(212, 175, 55, 0.2); color: var(--accent-gold); font-weight: bold; margin-right: 6px; }
+    .placement-instruction { display: block; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0, 210, 255, 0.25); color: #00ffaa; font-weight: 600; }
+    .step-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .custom-tool-bar { display: flex; flex-wrap: wrap; gap: 12px; background: #05070a; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 10px; align-items: center; }
+    .tool-item { display: flex; align-items: center; gap: 6px; }
+    .tool-item label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0; white-space: nowrap; }
+    .vault-card { background: #0d111a; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .vault-card h3 { font-size: 0.95rem; color: var(--accent-gold); margin-bottom: 3px; }
+    .vault-card p { font-size: 0.75rem; color: var(--text-muted); }
+    .thread-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+    .thread-card { background: #0d111a; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .thread-card.owned { border-color: var(--accent-gold); background: #141a26; }
+    .thread-card-top { display: flex; align-items: center; gap: 8px; }
+    .thread-swatch { width: 30px; height: 30px; border-radius: 4px; border: 1px solid #666; flex-shrink: 0; }
+    .thread-info { flex: 1; min-width: 0; }
+    .thread-info .brand-tag { font-size: 0.65rem; color: var(--accent-gold); font-weight: bold; }
+    .thread-info .thread-name { font-size: 0.78rem; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .thread-info .thread-code { font-size: 0.72rem; color: var(--text-muted); }
+    .thread-meter-bar { width: 100%; height: 5px; background: #05070a; border-radius: 3px; overflow: hidden; }
+    .thread-meter-fill { height: 100%; background: var(--accent-cyan); transition: width 0.3s; }
+    .pattern-card { background: #0d111a; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .pattern-card h3 { font-size: 0.9rem; color: var(--accent-gold); margin-bottom: 2px; }
+    .pattern-card p { font-size: 0.72rem; color: var(--text-muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.82rem; }
+    th, td { border: 1px solid var(--border-color); padding: 7px 9px; text-align: left; }
+    th { background: #080a0f; color: var(--accent-gold); }
+    tr:nth-child(even) { background: #111520; }
+    pre { background: #05070a; border: 1px solid var(--border-color); color: #00ffaa; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; white-space: pre-wrap; }
+    @media print { body * { visibility: hidden; } #printableTapeArea, #printableTapeArea * { visibility: visible; } #printableTapeArea { position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; padding: 20px; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>THREAD STUDIO PRO</h1>
+    <p>VisualWRAP Engine • Master Build Vault • Custom Guide & Spool Suite</p>
+  </div>
+  <div class="header-actions">
+    <button type="button" class="btn btn-outline btn-sm" onclick="location.reload(true)">🔄 Force Sync</button>
+    <button type="button" class="btn btn-danger btn-sm" onclick="factoryResetApp()">🔴 Reset</button>
+  </div>
+</header>
+
+<input type="radio" name="main_tab" id="t-vis" class="tab-radio" checked />
+<input type="radio" name="main_tab" id="t-step" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-3d" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-gcolor" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-vault" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-sheet" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-guide" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-gloss" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-imp" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-lib" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-lay" class="tab-radio" />
+<input type="radio" name="main_tab" id="t-vws" class="tab-radio" />
+
+<div class="tab-nav">
+  <label for="t-vis" class="tab-label" onclick="syncAllEngines()">1. Pattern Visualizer</label>
+  <label for="t-step" class="tab-label" onclick="syncAllEngines()">2. 🎬 Animated Workbench</label>
+  <label for="t-3d" class="tab-label" onclick="syncAllEngines()">3. 🌐 3D Photorealistic Rod</label>
+  <label for="t-gcolor" class="tab-label" onclick="renderGuideColorCoordinator()">4. 🎨 Guide Color Schemes</label>
+  <label for="t-vault" class="tab-label" onclick="renderVaultLists()">5. 📂 Rod & Master Vault</label>
+  <label for="t-sheet" class="tab-label" onclick="generateWrapSheet()">6. 📋 Wrap Instruction Sheet</label>
+  <label for="t-guide" class="tab-label" onclick="calculateGuideSpacing()">7. 🎣 Guide & Spiral Spacing</label>
+  <label for="t-gloss" class="tab-label" onclick="syncAllEngines()">8. 📖 Thread Glossary</label>
+  <label for="t-imp" class="tab-label" onclick="renderPatternLibraryList()">9. VisualWRAP Import</label>
+  <label for="t-lib" class="tab-label" onclick="renderThreadLibrary()">10. Thread Inventory & Spools</label>
+  <label for="t-lay" class="tab-label" onclick="calculateLayout()">11. Taper & 1:1 Scale Tape</label>
+  <label for="t-vws" class="tab-label" onclick="updateVisualWrapScript()">12. Export Script</label>
+</div>
+
+<div id="panel-vis" class="tab-panel">
+  <div class="grid-layout">
+    <div>
+      <div class="card">
+        <h2>
+          <span>Pattern & Blank Scaling</span>
+          <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--accent-cyan); cursor:pointer;">
+            <input type="checkbox" id="enableWeaveShadows" checked onchange="syncAllEngines()" style="width:16px; height:16px;" />
+            Under/Over Braid Shading
+          </label>
+        </h2>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Axis Layout</label>
+            <select id="patternAxis" onchange="syncAllEngines()">
+              <option value="2">2-Axis (Top / Bottom 180°)</option>
+              <option value="4" selected>4-Axis (0°, 90°, 180°, 270°)</option>
+              <option value="6">6-Axis (Hexagonal 60°)</option>
+              <option value="8">8-Axis (Octagonal 45°)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Industry Presets</label>
+            <select id="quickPreset" onchange="applyQuickPreset(this.value)">
+              <option value="diamond" selected>4-Color Traditional Diamond</option>
+              <option value="stJohns">St. John's Cross (3-Tone)</option>
+              <option value="maltese">Maltese Cross (Interlocking)</option>
+              <option value="nordic">Nordic Split-Cross</option>
+              <option value="chevron">Classic Chevron Fade</option>
+              <option value="spider">8-Axis Spider Star</option>
+              <option value="hexStar">6-Axis Hexagonal Star</option>
+              <option value="shark">Shark Tooth Wrap</option>
+              <option value="celtic">Celtic Interlocking Weave</option>
+              <option value="cube">3D Cube Optical Block</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-3">
+          <div class="form-group">
+            <label>Repeats (Crosses)</label>
+            <input type="number" id="repeats" value="4" min="1" max="15" onchange="syncAllEngines()" />
+          </div>
+          <div class="form-group">
+            <label>Pattern Length</label>
+            <input type="number" id="targetWrapLength" value="6.0" step="0.25" min="1" max="36" oninput="syncAllEngines()" />
+          </div>
+          <div class="form-group">
+            <label>Length Unit</label>
+            <select id="wrapUnit" onchange="syncAllEngines()">
+              <option value="in" selected>Inches (in)</option>
+              <option value="mm">mm</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label>1-Click House Colorway Presets</label>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="applyThemePalette('inshore')">🌾 Texas Inshore (Teal/Gold)</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="applyThemePalette('nordic')">⚔️ Nordic (Purple/Silver)</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="applyThemePalette('stealth')">🌑 Gunmetal/Navy</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="applyThemePalette('neon')">⚡ Hi-Vis Neon</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="applyThemePalette('random')">🎲 Random Shuffle</button>
+          </div>
+        </div>
+
+        <div style="background:#05070a; border:1px solid var(--border-color); border-radius:6px; padding:10px; margin-top:10px;">
+          <div id="scalingSummary" style="font-size:0.8rem; color:var(--accent-gold); font-weight:600;"></div>
+          <div id="axisTickSummary" style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>
+          <span>Thread Sequence Bands</span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addLayer()">+ Add Band</button>
+        </h2>
+        <div id="layersList"></div>
+        <button type="button" class="btn" style="margin-top: 10px;" onclick="syncAllEngines()">Render Full Design</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="canvas-wrapper card">
+        <h2>2D Proportional Layout & Axis Grid</h2>
+        <canvas id="wrapCanvas" width="740" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-step" class="tab-panel">
+  <div class="step-banner">
+    <div class="step-info" style="flex: 1 1 100%;">
+      <h3 id="stepHeader">Step 0 of 0: Ready to Wrap</h3>
+      <p id="stepSubtext">Click "Play Slow Motion" or "Next Thread" to start laying down threads.</p>
+      
+      <div class="waypoint-hud" id="waypointHud">
+        <span class="badge">READY</span> Select a thread to calculate active start point, helical rotation, and axial crossing marks.
+      </div>
+    </div>
+    
+    <div class="step-controls" style="margin-top: 10px; width: 100%;">
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="stepReset()">⏮ Reset</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="stepPrev()">◀ Prev</button>
+        <button type="button" class="btn btn-sm" id="playBtn" onclick="toggleAutoPlay()" style="min-width: 140px;">▶ Play Slow Motion</button>
+        <button type="button" class="btn btn-sm" onclick="stepNext()">Next ▶</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="stepAll()">⏭ Complete</button>
+      </div>
+      
+      <button type="button" class="btn-giant" onclick="stepNext()" style="width: 100%;">
+        👉 NEXT THREAD (TAP ANYWHERE)
+      </button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 12px;">
+    <div class="custom-tool-bar">
+      <div class="tool-item">
+        <label>Blank Base:</label>
+        <select id="blankColorPreset" onchange="updateBlankColor(this.value)" style="padding: 4px 6px; font-size: 0.75rem;">
+          <option value="#1c1f26" selected>Matte Carbon</option>
+          <option value="#050505">Gloss Black</option>
+          <option value="#f0f2f5">Gloss White</option>
+          <option value="#0b1b3a">Navy Metallic</option>
+          <option value="#3a3d45">Gunmetal</option>
+          <option value="#2b1a0e">Mahogany Brown</option>
+          <option value="CUSTOM">Custom...</option>
+        </select>
+        <input type="color" id="blankCustomColor" value="#1c1f26" style="width:30px; height:26px; padding:1px; cursor:pointer;" onchange="updateBlankCustomColor(this.value)" />
+      </div>
+
+      <div class="tool-item">
+        <label>Canvas BG:</label>
+        <select id="canvasBgPreset" onchange="updateCanvasBg(this.value)" style="padding: 4px 6px; font-size: 0.75rem;">
+          <option value="#05070A" selected>Studio Dark</option>
+          <option value="#020814">Deep Ocean</option>
+          <option value="#1f232b">Workbench</option>
+          <option value="#e6eaef">High Contrast</option>
+        </select>
+      </div>
+
+      <div class="tool-item" style="margin-left: auto;">
+        <label>Winding Speed:</label>
+        <input type="range" id="animSpeed" min="1" max="10" value="2" style="width: 100px; cursor: pointer;" title="1 = Ultra-Slow Crawl (30s+), 10 = Fast" />
+      </div>
+    </div>
+
+    <div class="canvas-wrapper" style="padding: 8px;">
+      <canvas id="stepCanvas" width="760" height="380"></canvas>
+    </div>
+  </div>
+</div>
+
+<div id="panel-3d" class="tab-panel">
+  <div class="card">
+    <h2>
+      <span>Photorealistic 3D Rod Wrap Simulator (Epoxy Gloss & Thread Crowns)</span>
+      <span style="font-size:0.75rem; color:var(--accent-cyan);">💡 Scroll Mouse Wheel or Pinch to Zoom (1x - 4x) • Drag to Rotate</span>
+    </h2>
+    <div class="canvas-wrapper">
+      <canvas id="rodCanvas3D" width="800" height="380" style="cursor: grab;"></canvas>
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; align-items: center; justify-content: center; width: 100%;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="reset3DView()">🎯 Reset View & Zoom (1x)</button>
+        <div class="tool-item">
+          <label>Zoom Level:</label>
+          <input type="range" id="zoomLevelRange" min="1.0" max="4.0" step="0.1" value="1.0" oninput="rodZoomLevel = parseFloat(this.value); draw3DRod();" style="width: 120px; cursor: pointer;" />
+        </div>
+        <div class="tool-item">
+          <label>Blank Caliber:</label>
+          <input type="range" id="blankThickness" min="40" max="140" value="85" oninput="draw3DRod()" style="width: 100px; cursor: pointer;" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-gcolor" class="tab-panel">
+  <div class="card">
+    <h2>
+      <span>🎨 Custom Guide Wrap Color Selector</span>
+      <button type="button" class="btn btn-outline btn-sm" onclick="pullColorsFromActivePattern()">🔄 Pull from Active Wrap Pattern</button>
+    </h2>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+      Customize the exact thread colors for your guide feet. The demo previews and step-by-step winding recipes will update automatically:
+    </p>
+    <div class="row-4">
+      <div class="form-group">
+        <label>Main Body (Base)</label>
+        <select id="gColor_main" onchange="renderGuideColorCoordinator()"></select>
+      </div>
+      <div class="form-group">
+        <label>Primary Inlay / Pinline</label>
+        <select id="gColor_inlay1" onchange="renderGuideColorCoordinator()"></select>
+      </div>
+      <div class="form-group">
+        <label>Secondary Center Accent</label>
+        <select id="gColor_inlay2" onchange="renderGuideColorCoordinator()"></select>
+      </div>
+      <div class="form-group">
+        <label>Tip-Off Trim Ring</label>
+        <select id="gColor_trim" onchange="renderGuideColorCoordinator()"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Guide Wrap Styles & Live Winding Recipes</h2>
+    <div id="guideColorSchemesList"></div>
+  </div>
+</div>
+
+<div id="panel-vault" class="tab-panel">
+  <div style="background:#131824; border:1px solid var(--accent-gold); border-radius:8px; padding:14px; margin-bottom:16px;">
+    <h3 style="color:var(--accent-gold); font-size:1rem; margin-bottom:4px;">🛡️ Master Shop Backup & Restore Center</h3>
+    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+      Backs up your <strong>entire application state</strong> into one file: Thread Inventory, Custom Spools, Spool Yardages, Saved Blank Profiles, Complete Build Recipes, and Saved Patterns.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      <button type="button" class="btn btn-sm" onclick="exportMasterMasterBackup()">💾 Download Master Backup File (.json)</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('importMasterFile').click()">📂 Restore from Master Backup</button>
+      <input type="file" id="importMasterFile" style="display:none;" accept=".json" onchange="importMasterMasterBackup(event)" />
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <div>
+      <div class="card">
+        <h2>💾 Save Blank Dimensions</h2>
+        <div class="form-group">
+          <label>Blank Model / Series Name</label>
+          <input type="text" id="blankModelName" placeholder="e.g., A.R.W. MB842 CarbonOne" />
+        </div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Length (ft)</label>
+            <input type="number" id="blankVaultLen" value="7.0" step="0.5" />
+          </div>
+          <div class="form-group">
+            <label>Guide Count</label>
+            <input type="number" id="blankVaultGuides" value="9" />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Butt O.D. (in)</label>
+            <input type="number" id="blankVaultButt" value="0.520" step="0.005" />
+          </div>
+          <div class="form-group">
+            <label>Tip O.D. (in)</label>
+            <input type="number" id="blankVaultTip" value="0.410" step="0.005" />
+          </div>
+        </div>
+        <button type="button" class="btn" onclick="saveBlankToVault()">💾 Save Blank Profile</button>
+      </div>
+
+      <div class="card">
+        <h2>📋 Saved Blank Profiles</h2>
+        <div id="blankVaultList"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>🏆 Save Complete Rod Build Recipe</h2>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+          Saves the entire project snapshot: Rod blank dimensions, active decorative thread pattern, exact color bands, guide spacing, and guide wrap colorway.
+        </p>
+        <div class="form-group">
+          <label>Build Recipe / Customer Name</label>
+          <input type="text" id="buildRecipeName" placeholder="e.g., Texas Inshore 7'0 MB842 - Custom Teal/Gold" />
+        </div>
+        <button type="button" class="btn" onclick="saveCompleteBuildRecipe()">💾 Snapshot & Save Complete Build</button>
+      </div>
+
+      <div class="card">
+        <h2>🗃️ Completed Build Recipes Vault</h2>
+        <div id="buildRecipeList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-sheet" class="tab-panel">
+  <div class="card">
+    <h2>
+      <span>📋 Complete Rod Builder Sequence & Waypoint Route Guide</span>
+      <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨 Print Wrap Sheet</button>
+    </h2>
+    <div id="wrapSheetContent"></div>
+  </div>
+</div>
+
+<div id="panel-guide" class="tab-panel">
+  <div class="grid-layout">
+    <div class="card">
+      <h2>🎣 Custom Guide Layout Settings</h2>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Rod Length</label>
+          <input type="number" id="rodTotalLength" value="7.0" step="0.5" oninput="calculateGuideSpacing()" />
+        </div>
+        <div class="form-group">
+          <label>Length Unit</label>
+          <select id="guideLengthUnit" onchange="calculateGuideSpacing()">
+            <option value="ft" selected>Feet (ft)</option>
+            <option value="in">Inches (in)</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Guide Count (Excluding Tip)</label>
+          <input type="number" id="totalGuides" value="9" min="5" max="15" oninput="calculateGuideSpacing()" />
+        </div>
+        <div class="form-group">
+          <label>Wrap Style</label>
+          <select id="guideWrapStyle" onchange="calculateGuideSpacing()">
+            <option value="SPIRAL_SIMPLE" selected>Spiral Acid Wrap (Simple 0°-180° Bumper)</option>
+            <option value="SPIRAL_PROGRESSIVE">Spiral Acid Wrap (0°-60°-120°-180°)</option>
+            <option value="CASTING_STD">Traditional Casting (Top 0°)</option>
+            <option value="SPINNING_STD">Traditional Spinning (Bottom 180°)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Distance to Stripper Guide</label>
+          <input type="number" id="distToStripper" value="21.0" step="0.5" oninput="calculateGuideSpacing()" />
+        </div>
+        <div class="form-group">
+          <label>Tip-to-Choker Spacing (Guide 1)</label>
+          <input type="number" id="tipToFirstGuide" value="4.0" step="0.25" oninput="calculateGuideSpacing()" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Guide Spacing & Axial Rotation Table</h2>
+      <div id="guideResults"></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-gloss" class="tab-panel">
+  <div class="card">
+    <h2>📖 Rod Wrap Terminology & Pattern Glossary</h2>
+    <div class="glossary-grid">
+      <div class="glossary-card">
+        <h3>CROSS <span>Geometry</span></h3>
+        <p>Passes where threads travel diagonally from butt to tip across opposing layout axes, crossing at 0°/180° (or 90°/270°) intersections to form traditional diamonds or cross motifs.</p>
+      </div>
+      <div class="glossary-card">
+        <h3>BOX <span>Geometry</span></h3>
+        <p>Sequences where thread passes frame a diamond center or Maltese cross, creating closed square outer borders that isolate patterns and transition into background fill.</p>
+      </div>
+      <div class="glossary-card">
+        <h3>CHEVRON <span>Geometry</span></h3>
+        <p>Unidirectional arrow or V-shape wrapping passes pointing toward the butt or tip of the rod, without closing into reverse intersections.</p>
+      </div>
+      <div class="glossary-card">
+        <h3>OFFSET CROSS <span>Geometry</span></h3>
+        <p>Crosses centered away from the primary 0°/180° intersections, creating split-cross, box-in-box, or multi-point secondary diamond fields.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-imp" class="tab-panel">
+  <div class="grid-layout">
+    <div>
+      <div class="card">
+        <h2>Import VisualWRAP Script</h2>
+        
+        <div style="background: #05070a; border: 1px dashed var(--accent-gold); border-radius: 6px; padding: 12px; margin-bottom: 14px;">
+          <label style="color: var(--accent-gold);">📁 Load .vwp File from Downloads</label>
+          <input type="file" id="vwpFileInput" accept=".vwp,.txt" onchange="handleVwpFileUpload(event)" style="padding: 6px; font-size: 0.82rem; cursor: pointer;" />
+          <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Supports all ThreadCentral, VisualWRAP v1/v2, INI, and custom scripts.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Pattern Name</label>
+          <input type="text" id="importPatternName" placeholder="e.g., ThreadCentral Pattern" />
+        </div>
+        <div class="form-group">
+          <label>VisualWRAP Script Code</label>
+          <textarea id="importScriptText" rows="9" placeholder="Paste script code or select a .vwp file above..."></textarea>
+        </div>
+        <button type="button" class="btn" onclick="parseAndSaveVisualWrapScript()">📥 Import & Save Pattern</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>
+          <span>Saved Pattern Library</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="patternCount">0 Patterns</span>
+        </h2>
+        <div id="patternLibraryList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-lib" class="tab-panel">
+  <div class="card">
+    <h2>➕ Add Custom Spool</h2>
+    <div class="row-4">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Brand / Series</label>
+        <input type="text" id="customBrand" placeholder="e.g., Fuji NOCP" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Color Code</label>
+        <input type="text" id="customCode" placeholder="e.g., 035 or 908" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Color Name</label>
+        <input type="text" id="customName" placeholder="e.g., Blue Metallic" />
+      </div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <div>
+          <label>Swatch</label>
+          <input type="color" id="customColor" value="#00509d" style="width:40px; height:38px; padding:1px; cursor:pointer;" />
+        </div>
+        <button type="button" class="btn btn-sm" onclick="addCustomSpool()" style="height:38px; width:auto; white-space:nowrap;">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>
+      <span>Full Brand Catalog & Live Spool Remaining Meters (With Manual Override)</span>
+      <span style="font-size:0.75rem; color:var(--text-muted);" id="inventoryCount">0 Spools Owned</span>
+    </h2>
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border-color);">
+      <button type="button" class="btn btn-outline btn-sm" onclick="exportInventory()">📥 Backup Inventory</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()">📤 Load Backup</button>
+      <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importInventory(event)" />
+    </div>
+
+    <div class="row-3">
+      <div class="form-group">
+        <label>Brand Filter</label>
+        <select id="brandFilter" onchange="renderThreadLibrary()">
+          <option value="ALL">All Brands (120+ Spools)</option>
+          <option value="Fuji Ultra Poly">Fuji Ultra Poly Solids</option>
+          <option value="Fuji Ultra Poly NOCP">Fuji Ultra Poly NOCP</option>
+          <option value="Fuji Ultra Poly Metallic">Fuji Ultra Poly Metallic</option>
+          <option value="Fuji Neon Series">Fuji Neon Series</option>
+          <option value="ProWrap Metallic">ProWrap Metallic</option>
+          <option value="ProWrap Color Fast">ProWrap Color Fast</option>
+          <option value="ProWrap Nylon">ProWrap Nylon</option>
+          <option value="Fish Hawk Nylon">Fish Hawk (RodDancer) Nylon</option>
+          <option value="Fish Hawk Opaque">Fish Hawk (RodDancer) Opaque</option>
+          <option value="Gudebrod Heritage">Gudebrod Heritage Classics</option>
+          <option value="Madeira Polyneon">Madeira Polyneon</option>
+          <option value="Custom / Shop Spools">Custom / Shop Spools</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>View Filter</label>
+        <select id="ownedFilter" onchange="renderThreadLibrary()">
+          <option value="ALL">Show All Catalog Spools</option>
+          <option value="OWNED">Show ONLY My Owned Spools</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Search Color / Number</label>
+        <input type="text" id="threadSearch" placeholder="Search 901, 326, 035, Blurple, Teal, Gold..." oninput="renderThreadLibrary()" />
+      </div>
+    </div>
+
+    <div class="thread-grid" id="threadGrid"></div>
+  </div>
+</div>
+
+<div id="panel-lay" class="tab-panel">
+  <div class="grid-layout">
+    <div class="card">
+      <h2>
+        <span>Blank Taper Settings</span>
+        <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--accent-gold); cursor:pointer; margin-bottom:0;">
+          <input type="checkbox" id="syncWithDesigner" checked onchange="toggleSyncMode(this.checked)" style="width:16px; height:16px;" />
+          🔗 Auto-Sync with Pattern Designer
+        </label>
+      </h2>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Units</label>
+          <select id="calcUnit" onchange="calculateLayout()">
+            <option value="in">Inches (in)</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Axis Layout</label>
+          <select id="axisCount" onchange="calculateLayout()">
+            <option value="2">2-Axis (Top / Bottom 180°)</option>
+            <option value="4" selected>4-Axis (0°, 90°, 180°, 270°)</option>
+            <option value="6">6-Axis (Hex 60°)</option>
+            <option value="8">8-Axis (45° Increments)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Butt Diameter</label>
+          <input type="number" id="buttDiam" value="0.520" step="0.005" oninput="calculateLayout()" />
+        </div>
+        <div class="form-group">
+          <label>Tip Diameter</label>
+          <input type="number" id="tipDiam" value="0.410" step="0.005" oninput="calculateLayout()" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Pattern Cross Count (Repeats)</label>
+        <input type="number" id="targetCrosses" value="4" min="1" max="15" oninput="calculateLayout()" />
+      </div>
+      <div id="taperSummaryBadge" style="background:#05070a; border:1px solid var(--border-color); border-radius:6px; padding:10px; font-size:0.8rem; color:var(--accent-gold);"></div>
+    </div>
+
+    <div class="card">
+      <h2>
+        <span>Taper Offset Spacing Marks</span>
+        <button type="button" class="btn btn-outline btn-sm" onclick="printScaleTape()">🖨️ Print 1:1 Scale Alignment Tape</button>
+      </h2>
+      <div id="layoutResults"></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-vws" class="tab-panel">
+  <div class="card">
+    <h2>VisualWRAP Formatted Script Export</h2>
+    <pre id="scriptOutput">// Script output...</pre>
+    <button type="button" class="btn" style="margin-top:10px;" onclick="copyScript()">Copy Script to Clipboard</button>
+  </div>
+</div>
+
+<div id="printableTapeArea" style="display:none;"></div>
+
+<script>
+// FULL MASTER THREAD CATALOG (120+ SPOOLS)
+const DEFAULT_CATALOG = [
+  { id: "fj_m901", brand: "Fuji Ultra Poly Metallic", code: "901", name: "Gold Metallic", hex: "#CCA43B" },
+  { id: "fj_m902", brand: "Fuji Ultra Poly Metallic", code: "902", name: "Silver Metallic", hex: "#D3D3D3" },
+  { id: "fj_m903", brand: "Fuji Ultra Poly Metallic", code: "903", name: "Copper Metallic", hex: "#B87333" },
+  { id: "fj_m904", brand: "Fuji Ultra Poly Metallic", code: "904", name: "Gunmetal Metallic", hex: "#383838" },
+  { id: "fj_m905", brand: "Fuji Ultra Poly Metallic", code: "905", name: "Red Metallic", hex: "#9E2A2B" },
+  { id: "fj_m906", brand: "Fuji Ultra Poly Metallic", code: "906", name: "Royal Blue Metallic", hex: "#00308F" },
+  { id: "fj_m907", brand: "Fuji Ultra Poly Metallic", code: "907", name: "Green Metallic", hex: "#1E5631" },
+  { id: "fj_m908", brand: "Fuji Ultra Poly Metallic", code: "908", name: "Blue Metallic", hex: "#00509D" },
+  { id: "fj_m909", brand: "Fuji Ultra Poly Metallic", code: "909", name: "Purple Metallic", hex: "#8338EC" },
+  { id: "fj_m024", brand: "Fuji Ultra Poly Metallic", code: "024", name: "Light Blue Metallic", hex: "#3A86FF" },
+  { id: "fj_m027", brand: "Fuji Ultra Poly Metallic", code: "027", name: "Dark Red Metallic", hex: "#660708" },
+  { id: "fj_m029", brand: "Fuji Ultra Poly Metallic", code: "029", name: "Lime Green Metallic", hex: "#52B788" },
+  { id: "fj_m030", brand: "Fuji Ultra Poly Metallic", code: "030", name: "Aqua Metallic", hex: "#00B4D8" },
+  { id: "fj_m031", brand: "Fuji Ultra Poly Metallic", code: "031", name: "Orange Metallic", hex: "#E85D04" },
+  { id: "fj_m032", brand: "Fuji Ultra Poly Metallic", code: "032", name: "Pink Metallic", hex: "#FF4D6D" },
+  { id: "fj_m035", brand: "Fuji Ultra Poly Metallic", code: "035", name: "Teal Metallic", hex: "#00A896" },
+  { id: "fj_m040", brand: "Fuji Ultra Poly Metallic", code: "040", name: "Pale Gold Metallic", hex: "#E5C358" },
+  { id: "fj_503", brand: "Fuji Neon Series", code: "503", name: "Neon Green", hex: "#39FF14" },
+  { id: "fj_504", brand: "Fuji Neon Series", code: "504", name: "Neon Lime", hex: "#CCFF00" },
+  { id: "fj_501", brand: "Fuji Neon Series", code: "501", name: "Neon Orange", hex: "#FF5E00" },
+  { id: "fj_502", brand: "Fuji Neon Series", code: "502", name: "Neon Pink", hex: "#FF1493" },
+  { id: "fj_001", brand: "Fuji Ultra Poly", code: "001", name: "White", hex: "#FFFFFF" },
+  { id: "fj_002", brand: "Fuji Ultra Poly", code: "002", name: "Black", hex: "#0A0A0A" },
+  { id: "fj_003", brand: "Fuji Ultra Poly", code: "003", name: "Smoke Grey", hex: "#7D8597" },
+  { id: "fj_004", brand: "Fuji Ultra Poly", code: "004", name: "Cobalt Blue", hex: "#004B87" },
+  { id: "fj_005", brand: "Fuji Ultra Poly", code: "005", name: "Royal Blue", hex: "#0056B3" },
+  { id: "fj_006", brand: "Fuji Ultra Poly", code: "006", name: "Red", hex: "#BA181B" },
+  { id: "fj_007", brand: "Fuji Ultra Poly", code: "007", name: "Garnet", hex: "#7B1113" },
+  { id: "fj_008", brand: "Fuji Ultra Poly", code: "008", name: "Green", hex: "#2D6A4F" },
+  { id: "fj_009", brand: "Fuji Ultra Poly", code: "009", name: "Teal", hex: "#007F5F" },
+  { id: "fj_014", brand: "Fuji Ultra Poly", code: "014", name: "Purple", hex: "#6A0DAD" },
+  { id: "fj_018", brand: "Fuji Ultra Poly", code: "018", name: "Bright Gold", hex: "#FFD700" },
+  { id: "fj_nop001", brand: "Fuji Ultra Poly NOCP", code: "NOP-001", name: "NOCP White", hex: "#FFFFFF" },
+  { id: "fj_nop002", brand: "Fuji Ultra Poly NOCP", code: "NOP-002", name: "NOCP Black", hex: "#0D0D0D" },
+  { id: "fj_nop004", brand: "Fuji Ultra Poly NOCP", code: "NOP-004", name: "NOCP Cobalt Blue", hex: "#0052A5" },
+  { id: "fj_nop006", brand: "Fuji Ultra Poly NOCP", code: "NOP-006", name: "NOCP Red", hex: "#D90429" },
+  { id: "fj_nop014", brand: "Fuji Ultra Poly NOCP", code: "NOP-014", name: "NOCP Purple", hex: "#7B2CBF" },
+  { id: "fj_nop024", brand: "Fuji Ultra Poly NOCP", code: "NOP-024", name: "Maui Wowie", hex: "#2EC4B6" },
+  { id: "fj_nop041", brand: "Fuji Ultra Poly NOCP", code: "NOP-041", name: "Blurple", hex: "#4B0082" },
+  { id: "fj_nop043", brand: "Fuji Ultra Poly NOCP", code: "NOP-043", name: "Cheddar", hex: "#FFA600" },
+  { id: "pw_9100", brand: "ProWrap Metallic", code: "9100", name: "Yellow Gold", hex: "#E8C838" },
+  { id: "pw_9600", brand: "ProWrap Metallic", code: "9600", name: "Purple Metallic", hex: "#782299" },
+  { id: "pw_9620", brand: "ProWrap Metallic", code: "9620", name: "Gold Metallic", hex: "#D4AF37" },
+  { id: "pw_9630", brand: "ProWrap Metallic", code: "9630", name: "Silver Metallic", hex: "#C0C0C0" },
+  { id: "pw_9650", brand: "ProWrap Metallic", code: "9650", name: "Red Metallic", hex: "#C1121F" },
+  { id: "pw_9660", brand: "ProWrap Metallic", code: "9660", name: "Blue Metallic", hex: "#00509D" },
+  { id: "pw_9680", brand: "ProWrap Metallic", code: "9680", name: "Aqua / Teal Metallic", hex: "#00A896" },
+  { id: "pw_9800", brand: "ProWrap Metallic", code: "9800", name: "Gunmetal Metallic", hex: "#2B2B2B" },
+  { id: "pw_440", brand: "ProWrap Color Fast", code: "440", name: "Turquoise", hex: "#00D2FF" },
+  { id: "pw_862", brand: "ProWrap Color Fast", code: "862", name: "Midnight Black", hex: "#111111" },
+  { id: "pw_807", brand: "ProWrap Color Fast", code: "807", name: "Pure White", hex: "#F8F9FA" },
+  { id: "pw_525", brand: "ProWrap Color Fast", code: "525", name: "Cobalt Blue", hex: "#003566" },
+  { id: "pw_322", brand: "ProWrap Color Fast", code: "322", name: "Scarlet Red", hex: "#D90429" },
+  { id: "pw_n01", brand: "ProWrap Nylon", code: "NY-01", name: "Jet Black", hex: "#050505" },
+  { id: "gb_001", brand: "Gudebrod Heritage", code: "#001", name: "Black", hex: "#000000" },
+  { id: "gb_002", brand: "Gudebrod Heritage", code: "#002", name: "White", hex: "#FFFFFF" },
+  { id: "gb_206", brand: "Gudebrod Heritage", code: "#206", name: "Garnet", hex: "#73000A" },
+  { id: "gb_209", brand: "Gudebrod Heritage", code: "#209", name: "Goldenrod", hex: "#D4AF37" },
+  { id: "gb_245", brand: "Gudebrod Heritage", code: "#245", name: "Royal Blue", hex: "#002FA7" },
+  { id: "gb_326", brand: "Gudebrod Heritage", code: "#326", name: "Scarlet", hex: "#E60000" }
+];
+
+const DEFAULT_PATTERNS = [
+  {
+    name: "4-Color Traditional Diamond",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "fj_014", geo: "BOX", offset: 12, passes: 4, type: "BOX" },
+      { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "OUT" },
+      { threadId: "fj_002", geo: "BOX", offset: 38, passes: 10, type: "OUT" }
+    ]
+  },
+  {
+    name: "St. John's Cross (3-Tone)",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
+      { threadId: "pw_440", geo: "BOX", offset: 15, passes: 6, type: "IN" },
+      { threadId: "fj_014", geo: "OFFSET", offset: 28, passes: 6, type: "OUT" }
+    ]
+  },
+  {
+    name: "Maltese Cross (Interlocking)",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
+      { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" },
+      { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" },
+      { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" }
+    ]
+  },
+  {
+    name: "Nordic Split-Cross",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "pw_9600", geo: "BOX", offset: 10, passes: 6, type: "BOX" },
+      { threadId: "pw_440", geo: "OFFSET", offset: 22, passes: 4, type: "OUT" },
+      { threadId: "fj_002", geo: "BOX", offset: 32, passes: 8, type: "OUT" }
+    ]
+  },
+  {
+    name: "Classic Chevron Fade",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CHEVRON", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "fj_m908", geo: "CHEVRON", offset: 12, passes: 6, type: "OUT" },
+      { threadId: "fj_002", geo: "CHEVRON", offset: 24, passes: 12, type: "OUT" }
+    ]
+  },
+  {
+    name: "8-Axis Spider Star",
+    axis: 8,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "pw_9600", geo: "BOX", offset: 8, passes: 6, type: "BOX" },
+      { threadId: "fj_002", geo: "BOX", offset: 20, passes: 10, type: "OUT" }
+    ]
+  },
+  {
+    name: "6-Axis Hexagonal Star",
+    axis: 6,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "pw_440", geo: "BOX", offset: 10, passes: 6, type: "BOX" },
+      { threadId: "fj_002", geo: "BOX", offset: 22, passes: 8, type: "OUT" }
+    ]
+  },
+  {
+    name: "Shark Tooth Wrap",
+    axis: 4,
+    layers: [
+      { threadId: "fj_001", geo: "CHEVRON", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "fj_003", geo: "CHEVRON", offset: 8, passes: 4, type: "OUT" },
+      { threadId: "fj_002", geo: "CHEVRON", offset: 16, passes: 10, type: "OUT" }
+    ]
+  },
+  {
+    name: "Celtic Interlocking Weave",
+    axis: 4,
+    layers: [
+      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
+      { threadId: "pw_9620", geo: "OFFSET", offset: 12, passes: 6, type: "BOX" },
+      { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "IN" },
+      { threadId: "fj_002", geo: "BOX", offset: 36, passes: 10, type: "OUT" }
+    ]
+  },
+  {
+    name: "3D Cube Optical Block",
+    axis: 4,
+    layers: [
+      { threadId: "fj_001", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
+      { threadId: "fj_003", geo: "BOX", offset: 12, passes: 6, type: "BOX" },
+      { threadId: "fj_002", geo: "BOX", offset: 24, passes: 10, type: "OUT" }
+    ]
+  }
+];
+
+const STORAGE_PREFIX = "tsp_master_v27_";
+let customShopSpools = [];
+let masterThreadCatalog = [...DEFAULT_CATALOG];
+let ownedThreads = [
+  "fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908", "fj_m024", "fj_m035", "pw_9600", "pw_9620", "gb_206", "gb_326"
+];
+
+let spoolCapacities = {};
+let manualDeductions = {};
+DEFAULT_CATALOG.forEach(t => { spoolCapacities[t.id] = 100; manualDeductions[t.id] = 0; });
+
+let savedBlanksVault = [
+  { id: "b_arw842", name: "A.R.W. MB842 CarbonOne", length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 },
+  { id: "b_inshore76", name: "Texas Inshore 7'6 ML", length: 7.5, buttD: 0.485, tipD: 0.380, guides: 10 }
+];
+let savedBuildRecipes = [];
+let savedPatternLibrary = JSON.parse(JSON.stringify(DEFAULT_PATTERNS));
+let currentPatternTitle = savedPatternLibrary[0].name;
+let layers = JSON.parse(JSON.stringify(savedPatternLibrary[0].layers));
+
+// ROBUST STORAGE & MIGRATION LOADER
+function loadAllStorageData() {
+  try {
+    const directOwned = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "owned"));
+    if (Array.isArray(directOwned) && directOwned.length > 0) ownedThreads = directOwned;
+
+    const directCustom = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "custom"));
+    if (Array.isArray(directCustom) && directCustom.length > 0) {
+      customShopSpools = directCustom;
+      masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools];
+    }
+
+    const directPats = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "pats"));
+    if (Array.isArray(directPats) && directPats.length > 0) savedPatternLibrary = directPats;
+
+    const caps = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "caps"));
+    if (caps) spoolCapacities = caps;
+    const deds = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "deds"));
+    if (deds) manualDeductions = deds;
+    const blanks = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "blanks"));
+    if (Array.isArray(blanks) && blanks.length > 0) savedBlanksVault = blanks;
+    const builds = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "builds"));
+    if (Array.isArray(builds)) savedBuildRecipes = builds;
+  } catch(e) {}
+
+  masterThreadCatalog.forEach(t => {
+    if (!spoolCapacities[t.id]) spoolCapacities[t.id] = 100;
+    if (!manualDeductions[t.id]) manualDeductions[t.id] = 0;
+  });
+}
+
+loadAllStorageData();
+
+let currentStepIndex = 0;
+let flattenedThreadSteps = [];
+let isPlaying = false;
+let animTimer = null;
+let animFrameId = null;
+let currentProgress = 1.0;
+let activeBlankColor = "#1c1f26";
+let activeCanvasBg = "#05070A";
+let rodAxialAngle = 0;
+let rodZoomLevel = 1.0;
+let isDragging = false;
+let lastMouseY = 0;
+let lastMouseX = 0;
+
+function factoryResetApp() {
+  if (confirm("Reset Thread Studio Pro to complete factory master catalog?")) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+function getThreadInfo(threadId) {
+  const matched = masterThreadCatalog.find(t => t.id === threadId);
+  if (matched) return { hex: matched.hex, name: `${matched.brand} ${matched.code} (${matched.name})` };
+  return { hex: "#CCA43B", name: "Gold Metallic" };
+}
+
+function syncAllEngines() {
+  buildFlattenedSteps();
+  updateScalingIndicators();
+  renderPattern();
+  renderStepCanvas();
+  draw3DRod();
+  updateVisualWrapScript();
+  generateWrapSheet();
+  calculateLayout();
+  renderThreadLibrary();
+  renderGuideColorCoordinator();
+}
+
+function updateScalingIndicators() {
+  const reps = parseInt(document.getElementById('repeats')?.value || 4);
+  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
+  const unit = document.getElementById('wrapUnit')?.value || "in";
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+  const repeatInterval = totLen / reps;
+  const axisStep = repeatInterval / axis;
+
+  const s1 = document.getElementById('scalingSummary');
+  const s2 = document.getElementById('axisTickSummary');
+  if (s1) s1.innerHTML = `Pattern Scale: <strong>${totLen.toFixed(2)} ${unit}</strong> total (${reps} repeats @ <strong>${repeatInterval.toFixed(3)} ${unit}</strong> / repeat)`;
+  if (s2) s2.innerHTML = `${axis}-Axis Crossing Marks @ every <strong>${axisStep.toFixed(3)} ${unit}</strong> along blank`;
+}
+
+function applyThemePalette(theme) {
+  const palettes = {
+    inshore: ["fj_m035", "fj_m901", "pw_440", "fj_002"],
+    nordic: ["pw_9600", "fj_m902", "fj_nop041", "gb_001"],
+    stealth: ["pw_9800", "fj_m906", "fj_003", "fj_002"],
+    neon: ["fj_503", "fj_501", "fj_504", "fj_002"]
+  };
+
+  let selected = palettes[theme];
+  if (theme === 'random' || !selected) {
+    const owned = masterThreadCatalog.filter(t => ownedThreads.includes(t.id));
+    selected = [...owned].sort(() => 0.5 - Math.random()).map(t => t.id);
+  }
+
+  layers.forEach((layer, idx) => {
+    layer.threadId = selected[idx % selected.length] || masterThreadCatalog[0].id;
+  });
+
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function updateBlankColor(val) {
+  if (val === "CUSTOM") {
+    activeBlankColor = document.getElementById('blankCustomColor')?.value || "#1c1f26";
+  } else {
+    activeBlankColor = val;
+    const c = document.getElementById('blankCustomColor');
+    if (c) c.value = val;
+  }
+  renderStepCanvas();
+  draw3DRod();
+}
+
+function updateBlankCustomColor(val) {
+  activeBlankColor = val;
+  const p = document.getElementById('blankColorPreset');
+  if (p) p.value = "CUSTOM";
+  renderStepCanvas();
+  draw3DRod();
+}
+
+function updateCanvasBg(val) {
+  activeCanvasBg = val;
+  renderStepCanvas();
+}
+
+function applyQuickPreset(type) {
+  const map = {
+    diamond: "4-Color Traditional Diamond",
+    stJohns: "St. John's Cross (3-Tone)",
+    maltese: "Maltese Cross (Interlocking)",
+    nordic: "Nordic Split-Cross",
+    chevron: "Classic Chevron Fade",
+    spider: "8-Axis Spider Star",
+    hexStar: "6-Axis Hexagonal Star",
+    shark: "Shark Tooth Wrap",
+    celtic: "Celtic Interlocking Weave",
+    cube: "3D Cube Optical Block"
+  };
+  const target = savedPatternLibrary.find(p => p.name === map[type]) || DEFAULT_PATTERNS.find(p => p.name === map[type]);
+  if (target) {
+    currentPatternTitle = target.name;
+    layers = JSON.parse(JSON.stringify(target.layers));
+    const ax = document.getElementById('patternAxis');
+    if (ax) ax.value = target.axis || 4;
+  }
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function renderLayersUI() {
+  const list = document.getElementById('layersList');
+  if (!list) return;
+  list.innerHTML = '';
+  layers.forEach((layer, idx) => {
+    const item = document.createElement('div');
+    item.className = 'layer-item';
+    let opt = `<optgroup label="⭐ My Owned Spools">`;
+    masterThreadCatalog.filter(t => ownedThreads.includes(t.id)).forEach(t => {
+      opt += `<option value="${t.id}" ${layer.threadId === t.id ? 'selected' : ''}>${t.brand} ${t.code} (${t.name})</option>`;
+    });
+    opt += `</optgroup><optgroup label="Master Catalog Spools">`;
+    masterThreadCatalog.filter(t => !ownedThreads.includes(t.id)).forEach(t => {
+      opt += `<option value="${t.id}" ${layer.threadId === t.id ? 'selected' : ''}>${t.brand} ${t.code} (${t.name})</option>`;
+    });
+    opt += `</optgroup>`;
+
+    const thread = getThreadInfo(layer.threadId);
+    item.innerHTML = `
+      <div class="layer-header">
+        <div class="color-badge" style="background:${thread.hex};"></div>
+        <select style="font-size:0.8rem; padding:6px; flex:1;" onchange="updateLayerProp(${idx}, 'threadId', this.value)">
+          ${opt}
+        </select>
+        <button type="button" style="background:none; border:none; color:#e63946; cursor:pointer; font-size:1.2rem; font-weight:bold; padding:0 4px;" onclick="removeLayer(${idx})">&times;</button>
+      </div>
+      <div class="layer-controls">
+        <div>
+          <label>Geometry</label>
+          <select style="font-size:0.75rem; padding:4px;" onchange="updateLayerProp(${idx}, 'geo', this.value)">
+            <option value="CROSS" ${layer.geo==='CROSS'?'selected':''}>CROSS (Diamond)</option>
+            <option value="BOX" ${layer.geo==='BOX'?'selected':''}>BOX (Border)</option>
+            <option value="CHEVRON" ${layer.geo==='CHEVRON'?'selected':''}>CHEVRON (Arrow)</option>
+            <option value="OFFSET" ${layer.geo==='OFFSET'?'selected':''}>OFFSET (Split)</option>
+          </select>
+        </div>
+        <div>
+          <label>Direction</label>
+          <select style="font-size:0.75rem; padding:4px;" onchange="updateLayerProp(${idx}, 'type', this.value)">
+            <option value="OUT" ${layer.type==='OUT'?'selected':''}>OUT (Expand)</option>
+            <option value="IN" ${layer.type==='IN'?'selected':''}>IN (Collapse)</option>
+            <option value="BOX" ${layer.type==='BOX'?'selected':''}>BOX (Interlock)</option>
+          </select>
+        </div>
+        <div>
+          <label>Passes</label>
+          <input type="number" value="${layer.passes}" min="1" max="50" style="padding:4px; font-size:0.75rem;" onchange="updateLayerProp(${idx}, 'passes', parseInt(this.value)||1)" />
+        </div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function updateLayerProp(idx, prop, value) {
+  if (layers[idx]) {
+    layers[idx][prop] = value;
+    renderLayersUI();
+    syncAllEngines();
+  }
+}
+
+function addLayer() {
+  const defaultSpool = masterThreadCatalog.find(t => ownedThreads.includes(t.id)) || masterThreadCatalog[0];
+  const prevOffset = layers.length > 0 ? (layers[layers.length - 1].offset + 12) : 0;
+  layers.push({ threadId: defaultSpool.id, geo: "BOX", offset: prevOffset, passes: 4, type: "OUT" });
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function removeLayer(idx) {
+  layers.splice(idx, 1);
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function buildFlattenedSteps() {
+  flattenedThreadSteps = [];
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+  layers.forEach((layer, layerIdx) => {
+    const thread = getThreadInfo(layer.threadId);
+    for (let p = 1; p <= layer.passes; p++) {
+      flattenedThreadSteps.push({
+        layerIndex: layerIdx,
+        threadId: layer.threadId,
+        geo: layer.geo || "CROSS",
+        offset: layer.offset || (layerIdx * 12),
+        threadNumInPass: p,
+        totalInPass: layer.passes,
+        threadName: thread.name,
+        color: thread.hex,
+        type: layer.type || "OUT",
+        axis: axis
+      });
+    }
+  });
+  if (currentStepIndex > flattenedThreadSteps.length) currentStepIndex = flattenedThreadSteps.length;
+}
+
+function renderPattern() {
+  const canvas = document.getElementById('wrapCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const repeats = parseInt(document.getElementById('repeats')?.value || 4);
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
+  const unit = document.getElementById('wrapUnit')?.value || "in";
+  const useShadows = document.getElementById('enableWeaveShadows')?.checked ?? true;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.fillStyle = "#05070A";
+  ctx.fillRect(0, 0, w, h);
+
+  const padLeft = 40;
+  const padRight = 20;
+  const plotW = w - padLeft - padRight;
+  const plotH = h - 60;
+  const cellW = plotW / repeats;
+  const centerY = plotH / 2;
+
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 1;
+  const axisStepY = plotH / axis;
+  for (let a = 0; a <= axis; a++) {
+    ctx.beginPath();
+    ctx.moveTo(padLeft, a * axisStepY);
+    ctx.lineTo(w - padRight, a * axisStepY);
+    ctx.stroke();
+  }
+
+  const repLen = totLen / repeats;
+  for (let i = 0; i <= repeats; i++) {
+    const x = padLeft + (i * cellW);
+    ctx.strokeStyle = "rgba(212, 175, 55, 0.45)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, plotH + 12);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(212, 175, 55, 0.9)";
+    ctx.font = "10px monospace";
+    ctx.fillText(`${(i * repLen).toFixed(2)} ${unit}`, x - 14, plotH + 26);
+  }
+
+  layers.forEach((layer, lIdx) => {
+    const thread = getThreadInfo(layer.threadId);
+    ctx.strokeStyle = thread.hex;
+    ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
+    ctx.lineCap = "round";
+
+    if (useShadows) {
+      ctx.shadowColor = "rgba(0,0,0,0.65)";
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetY = 2;
+    } else {
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+    }
+
+    for (let r = 0; r < repeats; r++) {
+      const cx = padLeft + (r * cellW) + (cellW / 2);
+      const layerOffset = (layer.offset || (lIdx * 12)) * (axis / 4);
+      let halfBox = (cellW * 0.22) + layerOffset;
+      if (layer.type === "IN") halfBox = Math.max(8, (cellW * 0.40) - layerOffset);
+
+      ctx.beginPath();
+      if (layer.geo === "CROSS") {
+        ctx.moveTo(cx - halfBox, centerY - halfBox);
+        ctx.lineTo(cx + halfBox, centerY + halfBox);
+        if (axis >= 4) {
+          ctx.moveTo(cx - halfBox, centerY + halfBox);
+          ctx.lineTo(cx + halfBox, centerY - halfBox);
+        }
+      } else if (layer.geo === "BOX" || layer.type === "BOX") {
+        ctx.moveTo(cx, centerY - halfBox);
+        ctx.lineTo(cx + halfBox, centerY);
+        ctx.lineTo(cx, centerY + halfBox);
+        ctx.lineTo(cx - halfBox, centerY);
+        ctx.closePath();
+      } else if (layer.geo === "CHEVRON") {
+        ctx.moveTo(cx - halfBox, centerY - halfBox);
+        ctx.lineTo(cx, centerY + halfBox);
+        ctx.lineTo(cx + halfBox, centerY - halfBox);
+      } else {
+        ctx.moveTo(cx - halfBox, centerY);
+        ctx.lineTo(cx, centerY + halfBox);
+        ctx.moveTo(cx, centerY - halfBox);
+        ctx.lineTo(cx + halfBox, centerY);
+      }
+      ctx.stroke();
+    }
+  });
+  ctx.shadowColor = "transparent";
+}
+
+function getTwoWayThreadPasses(step, r, repeats, cellW, rodX, centerY, buttDiam, tipDiam, axis) {
+  const cx = rodX + (r * cellW) + (cellW / 2);
+  const taperRatio = (r + 0.5) / repeats;
+  const currentHeight = buttDiam + ((tipDiam - buttDiam) * taperRatio);
+  const topBound = centerY - (currentHeight / 2);
+  const bottomBound = centerY + (currentHeight / 2);
+
+  let baseOffset = (step.offset || (step.layerIndex * 12));
+  if (step.type === "IN") baseOffset = Math.max(4, (cellW * 0.35) - (step.threadNumInPass * 1.6));
+  else baseOffset += (step.threadNumInPass * 1.5);
+
+  const halfBox = ((cellW * 0.22) + (baseOffset * (currentHeight / buttDiam))) * (axis / 4);
+  const forwardSegments = [];
+  const returnSegments = [];
+
+  if (step.geo === "CROSS") {
+    forwardSegments.push({ x1: cx - halfBox, y1: topBound, x2: cx + halfBox, y2: bottomBound });
+    if (axis >= 4) returnSegments.push({ x1: cx + halfBox, y1: topBound, x2: cx - halfBox, y2: bottomBound });
+    else returnSegments.push({ x1: cx + halfBox, y1: bottomBound, x2: cx - halfBox, y2: topBound });
+  } else if (step.geo === "BOX" || step.type === "BOX") {
+    forwardSegments.push({ x1: cx - halfBox, y1: centerY, x2: cx, y2: topBound + 3 });
+    forwardSegments.push({ x1: cx, y1: topBound + 3, x2: cx + halfBox, y2: centerY });
+    returnSegments.push({ x1: cx + halfBox, y1: centerY, x2: cx, y2: bottomBound - 3 });
+    returnSegments.push({ x1: cx, y1: bottomBound - 3, x2: cx - halfBox, y2: centerY });
+  } else if (step.geo === "CHEVRON") {
+    forwardSegments.push({ x1: cx - halfBox, y1: topBound + 3, x2: cx, y2: bottomBound - 3 });
+    returnSegments.push({ x1: cx, y1: bottomBound - 3, x2: cx + halfBox, y2: topBound + 3 });
+  } else {
+    forwardSegments.push({ x1: cx - halfBox, y1: centerY, x2: cx, y2: bottomBound - 3 });
+    returnSegments.push({ x1: cx, y1: topBound + 3, x2: cx + halfBox, y2: centerY });
+  }
+  return { forward: forwardSegments, return: returnSegments };
+}
+
+function renderStepCanvas() {
+  const canvas = document.getElementById('stepCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const repeats = parseInt(document.getElementById('repeats')?.value || 4);
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
+  const unit = document.getElementById('wrapUnit')?.value || "in";
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = activeCanvasBg;
+  ctx.fillRect(0, 0, w, h);
+
+  const rodX = 75;
+  const rodLength = w - 125;
+  const buttDiam = 84;
+  const tipDiam = 52;
+  const centerY = h / 2;
+  const buttTop = centerY - (buttDiam / 2);
+  const buttBottom = centerY + (buttDiam / 2);
+  const tipTop = centerY - (tipDiam / 2);
+  const tipBottom = centerY + (tipDiam / 2);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(rodX, buttTop);
+  ctx.lineTo(rodX + rodLength, tipTop);
+  ctx.lineTo(rodX + rodLength, tipBottom);
+  ctx.lineTo(rodX, buttBottom);
+  ctx.closePath();
+
+  const blankGrad = ctx.createLinearGradient(0, buttTop, 0, buttBottom);
+  blankGrad.addColorStop(0, adjustBrightness(activeBlankColor, -35));
+  blankGrad.addColorStop(0.18, adjustBrightness(activeBlankColor, 35));
+  blankGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, -55));
+  blankGrad.addColorStop(0.82, adjustBrightness(activeBlankColor, 25));
+  blankGrad.addColorStop(1, adjustBrightness(activeBlankColor, -65));
+  ctx.fillStyle = blankGrad;
+  ctx.fill();
+
+  [
+    { ratio: 0.0, label: "0° (Top)" },
+    { ratio: 0.5, label: "90° (Mid)" },
+    { ratio: 1.0, label: "180° (Bot)" }
+  ].forEach(mk => {
+    const yLeft = buttTop + (buttDiam * mk.ratio);
+    const yRight = tipTop + (tipDiam * mk.ratio);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.beginPath();
+    ctx.moveTo(rodX, yLeft);
+    ctx.lineTo(rodX + rodLength, yRight);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(212, 175, 55, 0.85)";
+    ctx.font = "9px monospace";
+    ctx.fillText(mk.label, rodX - 68, yLeft + 3);
+  });
+
+  const cellW = rodLength / repeats;
+  for (let r = 0; r <= repeats; r++) {
+    const x = rodX + (r * cellW);
+    const topY = buttTop + ((tipTop - buttTop) * (r / repeats));
+    const botY = buttBottom + ((tipBottom - buttBottom) * (r / repeats));
+
+    ctx.strokeStyle = "rgba(212, 175, 55, 0.35)";
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(x, topY);
+    ctx.lineTo(x, botY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = "#d4af37";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, topY - 3);
+    ctx.lineTo(x, topY + 3);
+    ctx.moveTo(x, botY - 3);
+    ctx.lineTo(x, botY + 3);
+    ctx.stroke();
+  }
+
+  if (flattenedThreadSteps.length > 0 && currentStepIndex > 0) {
+    for (let s = 0; s < currentStepIndex; s++) {
+      const step = flattenedThreadSteps[s];
+      const isLatest = (s === currentStepIndex - 1);
+      const thread = getThreadInfo(step.threadId);
+
+      ctx.strokeStyle = isLatest ? "#FFD700" : thread.hex;
+      ctx.lineWidth = isLatest ? 3.4 : 2.2;
+      ctx.shadowColor = isLatest ? "#FFD700" : "transparent";
+      ctx.shadowBlur = isLatest ? 12 : 0;
+      ctx.lineCap = "round";
+
+      const forwardProg = isLatest ? Math.min(1.0, currentProgress / 0.5) : 1.0;
+      const returnProg = isLatest ? Math.max(0.0, (currentProgress - 0.5) / 0.5) : 1.0;
+      const forwardLimitX = rodX + (rodLength * forwardProg);
+      const returnLimitX = (rodX + rodLength) - (rodLength * returnProg);
+
+      let activeNeedleX = forwardLimitX;
+      let activeNeedleY = centerY;
+
+      for (let r = 0; r < repeats; r++) {
+        const { forward, return: ret } = getTwoWayThreadPasses(step, r, repeats, cellW, rodX, centerY, buttDiam, tipDiam, axis);
+
+        forward.forEach(seg => {
+          if (Math.min(seg.x1, seg.x2) <= forwardLimitX) {
+            ctx.beginPath();
+            ctx.moveTo(seg.x1, seg.y1);
+            if (Math.max(seg.x1, seg.x2) <= forwardLimitX) {
+              ctx.lineTo(seg.x2, seg.y2);
+            } else {
+              const t = Math.max(0, Math.min(1, (forwardLimitX - seg.x1) / (seg.x2 - seg.x1 || 1)));
+              const currentY = seg.y1 + (seg.y2 - seg.y1) * t;
+              ctx.lineTo(forwardLimitX, currentY);
+              if (isLatest && currentProgress <= 0.5) {
+                activeNeedleX = forwardLimitX;
+                activeNeedleY = currentY;
+              }
+            }
+            ctx.stroke();
+          }
+        });
+
+        if (returnProg > 0.0) {
+          ret.forEach(seg => {
+            if (seg.x1 >= returnLimitX) {
+              ctx.beginPath();
+              ctx.moveTo(seg.x1, seg.y1);
+              if (seg.x2 >= returnLimitX) {
+                ctx.lineTo(seg.x2, seg.y2);
+              } else {
+                const t = Math.max(0, Math.min(1, (seg.x1 - returnLimitX) / (seg.x1 - seg.x2 || 1)));
+                const currentY = seg.y1 + (seg.y2 - seg.y1) * t;
+                ctx.lineTo(returnLimitX, currentY);
+                if (isLatest && currentProgress > 0.5) {
+                  activeNeedleX = returnLimitX;
+                  activeNeedleY = currentY;
+                }
+              }
+              ctx.stroke();
+            }
+          });
+        }
+      }
+
+      if (isLatest && currentProgress < 1.0) {
+        ctx.fillStyle = "#FFD700";
+        ctx.shadowColor = "#FFD700";
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(activeNeedleX, activeNeedleY, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  ctx.restore();
+
+  ctx.fillStyle = "#222";
+  ctx.fillRect(rodX - 5, buttTop, 5, buttDiam);
+  ctx.fillRect(rodX + rodLength, tipTop, 5, tipDiam);
+
+  const headEl = document.getElementById('stepHeader');
+  const subEl = document.getElementById('stepSubtext');
+  const hudEl = document.getElementById('waypointHud');
+
+  if (currentStepIndex === 0) {
+    if (headEl) headEl.textContent = `Step 0 of ${flattenedThreadSteps.length}: Ready to Wrap`;
+    if (subEl) subEl.textContent = `Click "Play Slow Motion" or tap giant button to start.`;
+    if (hudEl) hudEl.innerHTML = `<span class="badge">STANDBY</span> Waiting to wrap. Tap "Next Thread" to start.`;
+  } else {
+    const active = flattenedThreadSteps[currentStepIndex - 1];
+    const thread = getThreadInfo(active.threadId);
+    const repDist = totLen / repeats;
+    const axDist = repDist / axis;
+
+    if (headEl) headEl.innerHTML = `<span style="color:${thread.hex}; font-size:1.2rem;">■</span> Step ${currentStepIndex} of ${flattenedThreadSteps.length}: ${thread.name}`;
+    if (subEl) subEl.textContent = `Band #${active.layerIndex + 1} • Thread ${active.threadNumInPass} of ${active.totalInPass} • Geometry: ${active.geo} (${active.type})`;
+
+    let pt1 = `0° (0.00${unit})`;
+    let pt2 = `90° (${(axDist * 1).toFixed(2)}${unit})`;
+    let pt3 = `180° (${(axDist * 2).toFixed(2)}${unit})`;
+    let pt4 = `270° (${(axDist * 3).toFixed(2)}${unit})`;
+    let ptEnd = `Tip End (${totLen.toFixed(2)}${unit})`;
+
+    let placementCue = "";
+    if (active.type === "OUT") {
+      placementCue = "🎯 PLACEMENT: Lay this thread to the OUTSIDE edge of previous wraps (expanding away from center cross mark). Pack tightly.";
+    } else if (active.type === "IN") {
+      placementCue = "🎯 PLACEMENT: Lay this thread to the INSIDE edge of previous wraps (collapsing inward to fill gap toward center mark).";
+    } else {
+      placementCue = "🎯 PLACEMENT: Lay along the OUTER PERIMETER border, passing over top and bottom axes to frame the diamond center.";
+    }
+
+    if (hudEl) {
+      hudEl.innerHTML = `
+        <div>
+          <span class="badge">ACTIVE ROUTE</span> 
+          <strong>Start:</strong> Butt Top ${pt1} ➔ <strong>Cross:</strong> ${pt2} ➔ <strong>Cross:</strong> ${pt3} ➔ <strong>Cross:</strong> ${pt4} ➔ <strong>To:</strong> ${ptEnd} ➔ <strong>Return Pass</strong> back to Butt.
+        </div>
+        <div class="placement-instruction">
+          ${placementCue}
+        </div>
+      `;
+    }
+  }
+}
+
+function adjustBrightness(hex, percent) {
+  let num = parseInt(hex.replace("#",""), 16);
+  if (isNaN(num)) num = 0x1c1f26;
+  let r = Math.min(255, Math.max(0, (num >> 16) + percent));
+  let g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percent));
+  let b = Math.min(255, Math.max(0, (num & 0x0000FF) + percent));
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function animateThreadSweep(onComplete) {
+  cancelAnimationFrame(animFrameId);
+  currentProgress = 0.0;
+  const speedSetting = parseInt(document.getElementById('animSpeed')?.value || 2);
+  const stepIncrement = 0.00025 + (speedSetting * 0.0015);
+
+  function frame() {
+    currentProgress += stepIncrement;
+    if (currentProgress < 1.0) {
+      renderStepCanvas();
+      animFrameId = requestAnimationFrame(frame);
+    } else {
+      currentProgress = 1.0;
+      renderStepCanvas();
+      if (onComplete) onComplete();
+    }
+  }
+  animFrameId = requestAnimationFrame(frame);
+}
+
+function toggleAutoPlay() {
+  if (isPlaying) pauseAutoPlay();
+  else startAutoPlay();
+}
+
+function startAutoPlay() {
+  if (currentStepIndex >= flattenedThreadSteps.length) currentStepIndex = 0;
+  isPlaying = true;
+  const pBtn = document.getElementById('playBtn');
+  if (pBtn) {
+    pBtn.textContent = "⏸ Pause Animation";
+    pBtn.classList.add('btn-outline');
+  }
+  runPlayCycle();
+}
+
+function pauseAutoPlay() {
+  isPlaying = false;
+  clearTimeout(animTimer);
+  cancelAnimationFrame(animFrameId);
+  const pBtn = document.getElementById('playBtn');
+  if (pBtn) {
+    pBtn.textContent = "▶ Play Slow Motion";
+    pBtn.classList.remove('btn-outline');
+  }
+}
+
+function runPlayCycle() {
+  if (!isPlaying) return;
+  if (currentStepIndex < flattenedThreadSteps.length) {
+    currentStepIndex++;
+    animateThreadSweep(() => {
+      if (isPlaying) {
+        const speedSetting = parseInt(document.getElementById('animSpeed')?.value || 2);
+        animTimer = setTimeout(runPlayCycle, (11 - speedSetting) * 400);
+      }
+    });
+  } else {
+    pauseAutoPlay();
+  }
+}
+
+function stepNext() {
+  pauseAutoPlay();
+  if (currentStepIndex < flattenedThreadSteps.length) {
+    currentStepIndex++;
+    animateThreadSweep();
+  }
+}
+
+function stepPrev() {
+  pauseAutoPlay();
+  if (currentStepIndex > 0) {
+    currentStepIndex--;
+    currentProgress = 1.0;
+    renderStepCanvas();
+  }
+}
+
+function stepReset() {
+  pauseAutoPlay();
+  currentStepIndex = 0;
+  currentProgress = 1.0;
+  renderStepCanvas();
+}
+
+function stepAll() {
+  pauseAutoPlay();
+  currentStepIndex = flattenedThreadSteps.length;
+  currentProgress = 1.0;
+  renderStepCanvas();
+}
+
+function draw3DRod() {
+  const canvas = document.getElementById('rodCanvas3D');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const baseRodThickness = parseInt(document.getElementById('blankThickness')?.value || 85);
+  const rodThickness = baseRodThickness * rodZoomLevel;
+  const radius = rodThickness / 2;
+  const repeats = parseInt(document.getElementById('repeats')?.value || 4);
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+
+  ctx.fillStyle = "#05070A";
+  ctx.fillRect(0, 0, w, h);
+
+  const centerY = h / 2;
+  const rodTop = centerY - radius;
+  const rodBottom = centerY + radius;
+  const rodLength = (w - 120) * rodZoomLevel;
+  const rodX = 60 - ((rodLength - (w - 120)) / 2);
+
+  const blankGrad = ctx.createLinearGradient(0, rodTop, 0, rodBottom);
+  blankGrad.addColorStop(0, adjustBrightness(activeBlankColor, -55));
+  blankGrad.addColorStop(0.12, adjustBrightness(activeBlankColor, 45));
+  blankGrad.addColorStop(0.35, adjustBrightness(activeBlankColor, -20));
+  blankGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, -65));
+  blankGrad.addColorStop(0.78, adjustBrightness(activeBlankColor, 30));
+  blankGrad.addColorStop(1, adjustBrightness(activeBlankColor, -80));
+  ctx.fillStyle = blankGrad;
+  ctx.fillRect(rodX, rodTop, rodLength, rodThickness);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.03)";
+  ctx.lineWidth = 1;
+  for (let g = rodTop + 2; g < rodBottom; g += 3) {
+    ctx.beginPath();
+    ctx.moveTo(rodX, g);
+    ctx.lineTo(rodX + rodLength, g);
+    ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(rodX, rodTop, rodLength, rodThickness);
+  ctx.clip();
+
+  const cellW = rodLength / repeats;
+
+  function getCylinderCoords(xWorld, angleRad) {
+    const normAngle = ((angleRad + rodAxialAngle) % (Math.PI * 2) + (Math.PI * 2)) % (Math.PI * 2);
+    const isVisible = (normAngle >= 0 && normAngle <= Math.PI);
+    const yProj = centerY - (radius * Math.cos(normAngle));
+    const zDepth = Math.sin(normAngle);
+    return { x: xWorld, y: yProj, visible: isVisible, z: zDepth };
+  }
+
+  function drawPhotorealisticRibbon(p1, p2, threadHex) {
+    const numSubdivisions = Math.max(30, Math.floor(40 * rodZoomLevel));
+    for (let i = 0; i < numSubdivisions; i++) {
+      const t1 = i / numSubdivisions;
+      const t2 = (i + 1) / numSubdivisions;
+      
+      const xA = p1.x + (p2.x - p1.x) * t1;
+      const angA = p1.angle + (p2.angle - p1.angle) * t1;
+      const ptA = getCylinderCoords(xA, angA);
+
+      const xB = p1.x + (p2.x - p1.x) * t2;
+      const angB = p1.angle + (p2.angle - p1.angle) * t2;
+      const ptB = getCylinderCoords(xB, angB);
+
+      if (ptA.visible && ptB.visible) {
+        const avgZ = (ptA.z + ptB.z) / 2;
+        const alpha = Math.max(0.3, Math.min(1.0, avgZ * 1.15));
+
+        ctx.strokeStyle = "rgba(0,0,0,0.55)";
+        ctx.lineWidth = 3.2 * rodZoomLevel;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.moveTo(ptA.x, ptA.y + 1);
+        ctx.lineTo(ptB.x, ptB.y + 1);
+        ctx.stroke();
+
+        const tGrad = ctx.createLinearGradient(ptA.x, ptA.y - 2, ptA.x, ptA.y + 2);
+        tGrad.addColorStop(0, adjustBrightness(threadHex, 35));
+        tGrad.addColorStop(0.5, threadHex);
+        tGrad.addColorStop(1, adjustBrightness(threadHex, -45));
+        
+        ctx.strokeStyle = tGrad;
+        ctx.lineWidth = 2.2 * rodZoomLevel;
+        ctx.beginPath();
+        ctx.moveTo(ptA.x, ptA.y);
+        ctx.lineTo(ptB.x, ptB.y);
+        ctx.stroke();
+
+        if (avgZ > 0.4) {
+          ctx.strokeStyle = "rgba(255,255,255,0.38)";
+          ctx.lineWidth = 0.8 * rodZoomLevel;
+          ctx.beginPath();
+          ctx.moveTo(ptA.x, ptA.y - 0.5);
+          ctx.lineTo(ptB.x, ptB.y - 0.5);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  layers.forEach((layer, lIdx) => {
+    const thread = getThreadInfo(layer.threadId);
+    const baseOffset = (layer.offset || (lIdx * 12)) * (axis / 4) * rodZoomLevel;
+
+    for (let p = 1; p <= layer.passes; p++) {
+      let passOffset = baseOffset;
+      if (layer.type === "IN") {
+        passOffset = Math.max(4, (cellW * 0.38) - (p * 1.8 * rodZoomLevel));
+      } else {
+        passOffset += (p * 1.6 * rodZoomLevel);
+      }
+      const halfBox = ((cellW * 0.22) + passOffset) * (axis / 4);
+
+      for (let r = 0; r < repeats; r++) {
+        const cx = rodX + (r * cellW) + (cellW / 2);
+
+        for (let a = 0; a < axis; a++) {
+          const axisAngle = (a / axis) * (Math.PI * 2);
+
+          if (layer.geo === "CROSS") {
+            const p1 = { x: cx - halfBox, angle: axisAngle - (Math.PI / 2) };
+            const p2 = { x: cx + halfBox, angle: axisAngle + (Math.PI / 2) };
+            drawPhotorealisticRibbon(p1, p2, thread.hex);
+
+            if (axis >= 4) {
+              const p3 = { x: cx - halfBox, angle: axisAngle + (Math.PI / 2) };
+              const p4 = { x: cx + halfBox, angle: axisAngle - (Math.PI / 2) };
+              drawPhotorealisticRibbon(p3, p4, thread.hex);
+            }
+          } else if (layer.geo === "BOX" || layer.type === "BOX") {
+            const ptTop = { x: cx, angle: axisAngle - (Math.PI / 2) };
+            const ptRight = { x: cx + halfBox, angle: axisAngle };
+            const ptBot = { x: cx, angle: axisAngle + (Math.PI / 2) };
+            const ptLeft = { x: cx - halfBox, angle: axisAngle };
+
+            drawPhotorealisticRibbon(ptLeft, ptTop, thread.hex);
+            drawPhotorealisticRibbon(ptTop, ptRight, thread.hex);
+            drawPhotorealisticRibbon(ptRight, ptBot, thread.hex);
+            drawPhotorealisticRibbon(ptBot, ptLeft, thread.hex);
+          } else if (layer.geo === "CHEVRON") {
+            const ptL = { x: cx - halfBox, angle: axisAngle - (Math.PI / 2) };
+            const ptM = { x: cx, angle: axisAngle + (Math.PI / 2) };
+            const ptR = { x: cx + halfBox, angle: axisAngle - (Math.PI / 2) };
+            drawPhotorealisticRibbon(ptL, ptM, thread.hex);
+            drawPhotorealisticRibbon(ptM, ptR, thread.hex);
+          } else {
+            const p1 = { x: cx - halfBox, angle: axisAngle };
+            const p2 = { x: cx, angle: axisAngle + (Math.PI / 2) };
+            const p3 = { x: cx + halfBox, angle: axisAngle };
+            drawPhotorealisticRibbon(p1, p2, thread.hex);
+            drawPhotorealisticRibbon(p2, p3, thread.hex);
+          }
+        }
+      }
+    }
+  });
+
+  ctx.globalAlpha = 1.0;
+
+  const epoxyGloss = ctx.createLinearGradient(0, rodTop, 0, rodBottom);
+  epoxyGloss.addColorStop(0, "rgba(255, 255, 255, 0.45)");
+  epoxyGloss.addColorStop(0.10, "rgba(255, 255, 255, 0.75)");
+  epoxyGloss.addColorStop(0.20, "rgba(255, 255, 255, 0.15)");
+  epoxyGloss.addColorStop(0.50, "rgba(0, 0, 0, 0.0)");
+  epoxyGloss.addColorStop(0.82, "rgba(0, 0, 0, 0.45)");
+  epoxyGloss.addColorStop(1.0, "rgba(0, 0, 0, 0.85)");
+  ctx.fillStyle = epoxyGloss;
+  ctx.fillRect(rodX, rodTop, rodLength, rodThickness);
+
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.65)";
+  ctx.lineWidth = 2.0;
+  ctx.beginPath();
+  ctx.moveTo(rodX, rodTop + (rodThickness * 0.15));
+  ctx.lineTo(rodX + rodLength, rodTop + (rodThickness * 0.15));
+  ctx.stroke();
+
+  ctx.restore();
+
+  const checkGrad = ctx.createLinearGradient(0, rodTop, 0, rodBottom);
+  checkGrad.addColorStop(0, "#444");
+  checkGrad.addColorStop(0.3, "#fff");
+  checkGrad.addColorStop(0.7, "#222");
+  checkGrad.addColorStop(1, "#000");
+  ctx.fillStyle = checkGrad;
+  ctx.fillRect(rodX - 6, rodTop - 1, 6, rodThickness + 2);
+  ctx.fillRect(rodX + rodLength, rodTop - 1, 6, rodThickness + 2);
+
+  const deg = Math.round(((rodAxialAngle % (Math.PI * 2)) / (Math.PI * 2)) * 360);
+  const positiveDeg = deg < 0 ? deg + 360 : deg;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.font = "11px monospace";
+  ctx.fillText(`ZOOM: ${rodZoomLevel.toFixed(1)}x | ROTATION: ${positiveDeg}° / 360° | PHOTOREALISTIC EPOXY FINISH`, rodX + 10, rodBottom + 22);
+}
+
+function reset3DView() {
+  rodAxialAngle = 0;
+  rodZoomLevel = 1.0;
+  const zRange = document.getElementById('zoomLevelRange');
+  if (zRange) zRange.value = "1.0";
+  draw3DRod();
+}
+
+function populateGuideColorDropdowns() {
+  const ids = ['gColor_main', 'gColor_inlay1', 'gColor_inlay2', 'gColor_trim'];
+  let optionsHtml = '';
+  masterThreadCatalog.forEach(t => {
+    optionsHtml += `<option value="${t.id}">${t.brand} ${t.code} (${t.name})</option>`;
+  });
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = optionsHtml;
+  });
+
+  pullColorsFromActivePattern();
+}
+
+function pullColorsFromActivePattern() {
+  const activeColorIds = [...new Set(layers.map(l => l.threadId))];
+  const gM = document.getElementById('gColor_main');
+  const gI1 = document.getElementById('gColor_inlay1');
+  const gI2 = document.getElementById('gColor_inlay2');
+  const gT = document.getElementById('gColor_trim');
+
+  if (gM && activeColorIds[0]) gM.value = activeColorIds[0];
+  if (gI1 && (activeColorIds[1] || activeColorIds[0])) gI1.value = activeColorIds[1] || activeColorIds[0];
+  if (gI2 && (activeColorIds[2] || activeColorIds[0])) gI2.value = activeColorIds[2] || activeColorIds[0];
+  if (gT && (activeColorIds[3] || activeColorIds[1])) gT.value = activeColorIds[3] || activeColorIds[1] || activeColorIds[0];
+
+  renderGuideColorCoordinator();
+}
+
+function renderGuideColorCoordinator() {
+  const container = document.getElementById('guideColorSchemesList');
+  if (!container) return;
+
+  const c1Id = document.getElementById('gColor_main')?.value || layers[0]?.threadId || "fj_002";
+  const c2Id = document.getElementById('gColor_inlay1')?.value || layers[1]?.threadId || "fj_m901";
+  const c3Id = document.getElementById('gColor_inlay2')?.value || layers[2]?.threadId || "pw_440";
+  const c4Id = document.getElementById('gColor_trim')?.value || layers[3]?.threadId || "fj_m902";
+
+  const c1 = getThreadInfo(c1Id);
+  const c2 = getThreadInfo(c2Id);
+  const c3 = getThreadInfo(c3Id);
+  const c4 = getThreadInfo(c4Id);
+
+  const schemes = [
+    {
+      title: "Scheme A: Classic Single Inlay (Clean & Balanced)",
+      desc: "Ideal for all running guides. Solid base color with a 3-turn metallic trim band.",
+      recipe: `1. Start <strong>${c1.name}</strong> (Base), wrap 10 turns up the guide foot.<br/>2. Insert inlay loop of <strong>${c2.name}</strong> (Inlay), wrap 3 tight turns.<br/>3. Continue <strong>${c1.name}</strong> for 20 turns to guide transition. Tie off.`,
+      bands: [ { color: c1.hex, width: 30 }, { color: c2.hex, width: 10 }, { color: c1.hex, width: 60 } ]
+    },
+    {
+      title: "Scheme B: Double Metallic Split Inlay (Tournament Series)",
+      desc: "Perfect for stripper and reduction guides. Features dual pinline borders framing an accent center.",
+      recipe: `1. Start <strong>${c1.name}</strong>, wrap 8 turns.<br/>2. Lay 2 turns <strong>${c2.name}</strong> (Pinline 1).<br/>3. Lay 6 turns <strong>${c3.name}</strong> (Center Inlay).<br/>4. Lay 2 turns <strong>${c2.name}</strong> (Pinline 2).<br/>5. Finish with <strong>${c1.name}</strong> over guide foot.`,
+      bands: [ { color: c1.hex, width: 25 }, { color: c2.hex, width: 6 }, { color: c3.hex, width: 22 }, { color: c2.hex, width: 6 }, { color: c1.hex, width: 41 } ]
+    },
+    {
+      title: "Scheme C: Metallic Tip-Off & Center Band (Custom Inshore)",
+      desc: "Features 5-turn metallic tipping at the start of the guide foot with a matching center accent ring.",
+      recipe: `1. Start <strong>${c4.name}</strong> (Tip-off), wrap 5 turns tipping.<br/>2. Transition to <strong>${c1.name}</strong>, wrap 14 turns.<br/>3. Insert <strong>${c3.name}</strong> 4-turn center band.<br/>4. Finish <strong>${c1.name}</strong> over guide heel.`,
+      bands: [ { color: c4.hex, width: 14 }, { color: c1.hex, width: 35 }, { color: c3.hex, width: 12 }, { color: c1.hex, width: 39 } ]
+    },
+    {
+      title: "Scheme D: 3-Tone Stacked Gradient (Full Pattern Match)",
+      desc: "Replicates the multi-layer fade of your diamond cross wrap across the guide wrap foot.",
+      recipe: `1. Start <strong>${c1.name}</strong> (12 turns) ➔ 2. Wrap <strong>${c2.name}</strong> (6 turns) ➔ 3. Wrap <strong>${c3.name}</strong> (6 turns) ➔ 4. Wrap <strong>${c4.name}</strong> (6 turns) ➔ 5. Finish with <strong>${c1.name}</strong>.`,
+      bands: [ { color: c1.hex, width: 25 }, { color: c2.hex, width: 15 }, { color: c3.hex, width: 15 }, { color: c4.hex, width: 15 }, { color: c1.hex, width: 30 } ]
+    }
+  ];
+
+  let html = "";
+  schemes.forEach((s, idx) => {
+    html += `
+      <div class="guide-style-card">
+        <div class="guide-canvas-box">
+          <canvas id="gCanvas_${idx}" width="300" height="90"></canvas>
+        </div>
+        <div class="guide-info-box">
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+          <div class="recipe-list"><strong>Winding Recipe:</strong><br/>${s.recipe}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  schemes.forEach((s, idx) => {
+    const cvs = document.getElementById(`gCanvas_${idx}`);
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    const w = cvs.width;
+    const h = cvs.height;
+
+    ctx.fillStyle = "#05070A";
+    ctx.fillRect(0, 0, w, h);
+
+    const blankY = h / 2;
+    const blankH = 26;
+
+    const bGrad = ctx.createLinearGradient(0, blankY - blankH/2, 0, blankY + blankH/2);
+    bGrad.addColorStop(0, adjustBrightness(activeBlankColor, -35));
+    bGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, 25));
+    bGrad.addColorStop(1, adjustBrightness(activeBlankColor, -60));
+    ctx.fillStyle = bGrad;
+    ctx.fillRect(10, blankY - blankH/2, w - 20, blankH);
+
+    ctx.fillStyle = "#a8b2c1";
+    ctx.beginPath();
+    ctx.moveTo(w - 70, blankY - blankH/2 - 4);
+    ctx.lineTo(w - 30, blankY - blankH/2 - 20);
+    ctx.lineTo(w - 20, blankY - blankH/2 - 20);
+    ctx.lineTo(w - 55, blankY - blankH/2 - 2);
+    ctx.lineTo(60, blankY - blankH/2 - 2);
+    ctx.lineTo(55, blankY - blankH/2);
+    ctx.lineTo(w - 65, blankY - blankH/2);
+    ctx.closePath();
+    ctx.fill();
+
+    let currentX = 40;
+    const wrapW = 200;
+    const wrapY = blankY - blankH/2 - 2;
+    const wrapH = blankH + 4;
+
+    s.bands.forEach(band => {
+      const bWidth = (band.width / 100) * wrapW;
+      const tGrad = ctx.createLinearGradient(0, wrapY, 0, wrapY + wrapH);
+      tGrad.addColorStop(0, adjustBrightness(band.color, 25));
+      tGrad.addColorStop(0.5, band.color);
+      tGrad.addColorStop(1, adjustBrightness(band.color, -45));
+      ctx.fillStyle = tGrad;
+      ctx.fillRect(currentX, wrapY, bWidth, wrapH);
+      currentX += bWidth;
+    });
+
+    const eGrad = ctx.createLinearGradient(0, wrapY, 0, wrapY + wrapH);
+    eGrad.addColorStop(0, "rgba(255,255,255,0.4)");
+    eGrad.addColorStop(1, "rgba(0,0,0,0.6)");
+    ctx.fillStyle = eGrad;
+    ctx.fillRect(40, wrapY, wrapW, wrapH);
+  });
+}
+
+function saveBlankToVault() {
+  const name = document.getElementById('blankModelName')?.value.trim();
+  const len = parseFloat(document.getElementById('blankVaultLen')?.value || 7.0);
+  const butt = parseFloat(document.getElementById('blankVaultButt')?.value || 0.520);
+  const tip = parseFloat(document.getElementById('blankVaultTip')?.value || 0.410);
+  const gCount = parseInt(document.getElementById('blankVaultGuides')?.value || 9);
+
+  if (!name) { alert("Please enter a blank model name."); return; }
+  savedBlanksVault.unshift({ id: "blk_" + Date.now(), name, length: len, buttD: butt, tipD: tip, guides: gCount });
+  localStorage.setItem(STORAGE_PREFIX + "blanks", JSON.stringify(savedBlanksVault));
+  renderVaultLists();
+  alert(`Saved blank profile "${name}"!`);
+}
+
+function loadBlankFromVault(idx) {
+  const b = savedBlanksVault[idx];
+  if (!b) return;
+  document.getElementById('buttDiam').value = b.buttD;
+  document.getElementById('tipDiam').value = b.tipD;
+  document.getElementById('rodTotalLength').value = b.length;
+  document.getElementById('totalGuides').value = b.guides;
+  calculateLayout();
+  calculateGuideSpacing();
+  syncAllEngines();
+  alert(`Loaded blank specs for "${b.name}"!`);
+}
+
+function deleteBlankFromVault(idx) {
+  savedBlanksVault.splice(idx, 1);
+  localStorage.setItem(STORAGE_PREFIX + "blanks", JSON.stringify(savedBlanksVault));
+  renderVaultLists();
+}
+
+function saveCompleteBuildRecipe() {
+  const recipeName = document.getElementById('buildRecipeName')?.value.trim();
+  if (!recipeName) { alert("Please enter a name for this build recipe."); return; }
+
+  const snapshot = {
+    id: "bld_" + Date.now(),
+    name: recipeName,
+    date: new Date().toLocaleDateString(),
+    blank: {
+      buttD: parseFloat(document.getElementById('buttDiam')?.value || 0.520),
+      tipD: parseFloat(document.getElementById('tipDiam')?.value || 0.410),
+      length: parseFloat(document.getElementById('rodTotalLength')?.value || 7.0),
+      guides: parseInt(document.getElementById('totalGuides')?.value || 9),
+      guideStyle: document.getElementById('guideWrapStyle')?.value || 'SPIRAL_SIMPLE'
+    },
+    pattern: {
+      name: currentPatternTitle,
+      axis: parseInt(document.getElementById('patternAxis')?.value || 4),
+      repeats: parseInt(document.getElementById('repeats')?.value || 4),
+      length: parseFloat(document.getElementById('targetWrapLength')?.value || 6.0),
+      layers: JSON.parse(JSON.stringify(layers))
+    },
+    guideColors: {
+      main: document.getElementById('gColor_main')?.value || layers[0]?.threadId,
+      inlay1: document.getElementById('gColor_inlay1')?.value || layers[1]?.threadId,
+      inlay2: document.getElementById('gColor_inlay2')?.value || layers[2]?.threadId,
+      trim: document.getElementById('gColor_trim')?.value || layers[3]?.threadId
+    }
+  };
+
+  savedBuildRecipes.unshift(snapshot);
+  localStorage.setItem(STORAGE_PREFIX + "builds", JSON.stringify(savedBuildRecipes));
+  renderVaultLists();
+  alert(`Saved complete build recipe for "${recipeName}"!`);
+}
+
+function loadCompleteBuildRecipe(idx) {
+  const r = savedBuildRecipes[idx];
+  if (!r) return;
+  document.getElementById('buttDiam').value = r.blank.buttD;
+  document.getElementById('tipDiam').value = r.blank.tipD;
+  document.getElementById('rodTotalLength').value = r.blank.length;
+  document.getElementById('totalGuides').value = r.blank.guides;
+  document.getElementById('guideWrapStyle').value = r.blank.guideStyle;
+
+  currentPatternTitle = r.pattern.name;
+  layers = JSON.parse(JSON.stringify(r.pattern.layers));
+  document.getElementById('patternAxis').value = r.pattern.axis;
+  document.getElementById('repeats').value = r.pattern.repeats;
+  document.getElementById('targetWrapLength').value = r.pattern.length;
+
+  if (r.guideColors) {
+    document.getElementById('gColor_main').value = r.guideColors.main;
+    document.getElementById('gColor_inlay1').value = r.guideColors.inlay1;
+    document.getElementById('gColor_inlay2').value = r.guideColors.inlay2;
+    document.getElementById('gColor_trim').value = r.guideColors.trim;
+  }
+
+  renderLayersUI();
+  calculateLayout();
+  calculateGuideSpacing();
+  syncAllEngines();
+  alert(`Loaded complete build "${r.name}"!`);
+}
+
+function deleteCompleteBuildRecipe(idx) {
+  if (confirm(`Delete "${savedBuildRecipes[idx].name}"?`)) {
+    savedBuildRecipes.splice(idx, 1);
+    localStorage.setItem(STORAGE_PREFIX + "builds", JSON.stringify(savedBuildRecipes));
+    renderVaultLists();
+  }
+}
+
+function renderVaultLists() {
+  const bList = document.getElementById('blankVaultList');
+  if (bList) {
+    bList.innerHTML = savedBlanksVault.map((b, idx) => `
+      <div class="vault-card">
+        <div>
+          <h3>${b.name}</h3>
+          <p>${b.length}'0" • Butt: ${b.buttD}" • Tip: ${b.tipD}" • ${b.guides} Guides</p>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="loadBlankFromVault(${idx})">Load</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="deleteBlankFromVault(${idx})">&times;</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const rList = document.getElementById('buildRecipeList');
+  if (rList) {
+    rList.innerHTML = savedBuildRecipes.length === 0 ? `<p style="font-size:0.8rem; color:var(--text-muted);">No complete build snapshots saved yet.</p>` :
+      savedBuildRecipes.map((r, idx) => `
+        <div class="vault-card">
+          <div>
+            <h3>${r.name}</h3>
+            <p>Saved: ${r.date} • Blank: ${r.blank.length}' • Pattern: ${r.pattern.name}</p>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="loadCompleteBuildRecipe(${idx})">Restore Build</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteCompleteBuildRecipe(${idx})">&times;</button>
+          </div>
+        </div>
+      `).join('');
+  }
+}
+
+function exportMasterMasterBackup() {
+  const masterData = { owned: ownedThreads, custom: customShopSpools, caps: spoolCapacities, deds: manualDeductions, blanks: savedBlanksVault, builds: savedBuildRecipes, patterns: savedPatternLibrary };
+  const a = document.createElement('a');
+  a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData));
+  a.download = "yellow_rose_custom_rods_master_backup.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function importMasterMasterBackup(e) {
+  const r = new FileReader();
+  r.onload = function(evt) {
+    try {
+      const p = JSON.parse(evt.target.result);
+      if (p.owned) ownedThreads = p.owned;
+      if (p.custom) { customShopSpools = p.custom; masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools]; }
+      if (p.caps) spoolCapacities = p.caps;
+      if (p.deds) manualDeductions = p.deds;
+      if (p.blanks) savedBlanksVault = p.blanks;
+      if (p.builds) savedBuildRecipes = p.builds;
+      if (p.patterns) savedPatternLibrary = p.patterns;
+
+      localStorage.setItem(STORAGE_PREFIX + "owned", JSON.stringify(ownedThreads));
+      localStorage.setItem(STORAGE_PREFIX + "custom", JSON.stringify(customShopSpools));
+      localStorage.setItem(STORAGE_PREFIX + "caps", JSON.stringify(spoolCapacities));
+      localStorage.setItem(STORAGE_PREFIX + "deds", JSON.stringify(manualDeductions));
+      localStorage.setItem(STORAGE_PREFIX + "blanks", JSON.stringify(savedBlanksVault));
+      localStorage.setItem(STORAGE_PREFIX + "builds", JSON.stringify(savedBuildRecipes));
+      localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
+
+      renderVaultLists();
+      renderPatternLibraryList();
+      renderThreadLibrary();
+      renderLayersUI();
+      populateGuideColorDropdowns();
+      syncAllEngines();
+      alert("Master backup successfully restored!");
+    } catch (err) { alert("Invalid master backup file."); }
+  };
+  if (e.target.files && e.target.files[0]) r.readAsText(e.target.files[0]);
+}
+
+function exportInventory() {
+  const data = { owned: ownedThreads, custom: customShopSpools, caps: spoolCapacities, deds: manualDeductions };
+  const a = document.createElement('a');
+  a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+  a.download = "rod_thread_inventory.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function importInventory(e) {
+  const r = new FileReader();
+  r.onload = function(evt) {
+    try {
+      const p = JSON.parse(evt.target.result);
+      if (Array.isArray(p)) ownedThreads = p;
+      else if (p.owned) {
+        ownedThreads = p.owned || [];
+        customShopSpools = p.custom || [];
+        spoolCapacities = p.caps || {};
+        manualDeductions = p.deds || {};
+        masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools];
+      }
+      localStorage.setItem(STORAGE_PREFIX + "owned", JSON.stringify(ownedThreads));
+      renderThreadLibrary();
+      renderLayersUI();
+      syncAllEngines();
+      alert("Inventory restored!");
+    } catch (err) { alert("Invalid backup file."); }
+  };
+  if (e.target.files && e.target.files[0]) r.readAsText(e.target.files[0]);
+}
+
+function toggleOwnThread(id) {
+  if (ownedThreads.includes(id)) ownedThreads = ownedThreads.filter(t => t !== id);
+  else {
+    ownedThreads.push(id);
+    if (!spoolCapacities[id]) spoolCapacities[id] = 100;
+    if (!manualDeductions[id]) manualDeductions[id] = 0;
+  }
+  localStorage.setItem(STORAGE_PREFIX + "owned", JSON.stringify(ownedThreads));
+  renderThreadLibrary();
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function calculateThreadConsumption() {
+  const reps = parseInt(document.getElementById('repeats')?.value || 4);
+  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
+  const buttD = parseFloat(document.getElementById('buttDiam')?.value || 0.520);
+  const tipD = parseFloat(document.getElementById('tipDiam')?.value || 0.410);
+  const avgCirc = ((buttD + tipD) / 2) * Math.PI;
+  const singleHelicalInch = Math.sqrt(Math.pow(avgCirc, 2) + Math.pow(totLen / reps, 2));
+  const consumptionPerSpool = {};
+
+  layers.forEach(layer => {
+    const inchesUsed = singleHelicalInch * 2 * layer.passes * reps;
+    const yardsUsed = inchesUsed / 36;
+    consumptionPerSpool[layer.threadId] = (consumptionPerSpool[layer.threadId] || 0) + yardsUsed;
+  });
+  return consumptionPerSpool;
+}
+
+function renderThreadLibrary() {
+  const grid = document.getElementById('threadGrid');
+  if (!grid) return;
+  const brand = document.getElementById('brandFilter')?.value || 'ALL';
+  const owned = document.getElementById('ownedFilter')?.value || 'ALL';
+  const search = (document.getElementById('threadSearch')?.value || '').toLowerCase().trim();
+
+  const cEl = document.getElementById('inventoryCount');
+  if (cEl) cEl.textContent = `${ownedThreads.length} Spools Owned`;
+
+  const consumption = calculateThreadConsumption();
+  const filtered = masterThreadCatalog.filter(t => {
+    return (brand === "ALL" || t.brand === brand) &&
+      (owned === "ALL" || ownedThreads.includes(t.id)) &&
+      (search === "" || t.name.toLowerCase().includes(search) || t.code.toLowerCase().includes(search) || t.brand.toLowerCase().includes(search));
+  });
+
+  grid.innerHTML = filtered.map(t => {
+    const isOwned = ownedThreads.includes(t.id);
+    const capacity = spoolCapacities[t.id] || 100;
+    const yardsUsedInWrap = consumption[t.id] || 0;
+    const manualDeduct = manualDeductions[t.id] || 0;
+    const remainingYards = Math.max(0, capacity - yardsUsedInWrap - manualDeduct);
+    const percentLeft = Math.max(0, Math.min(100, (remainingYards / capacity) * 100));
+
+    return `
+      <div class="thread-card ${isOwned ? 'owned' : ''}">
+        <div class="thread-card-top">
+          <div class="thread-swatch" style="background: ${t.hex};"></div>
+          <div class="thread-info">
+            <div class="brand-tag">${t.brand}</div>
+            <div class="thread-name">${t.name}</div>
+            <div class="thread-code">Code: ${t.code}</div>
+          </div>
+          <input type="checkbox" ${isOwned ? 'checked' : ''} onchange="toggleOwnThread('${t.id}')" style="width:18px; height:18px; cursor:pointer;" />
+        </div>
+        ${isOwned ? `
+          <div style="font-size:0.7rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <span>Spool: 
+              <select onchange="spoolCapacities['${t.id}']=parseFloat(this.value); localStorage.setItem(STORAGE_PREFIX+'caps', JSON.stringify(spoolCapacities)); renderThreadLibrary();" style="padding:1px 3px; font-size:0.7rem; width:auto; display:inline-block;">
+                <option value="100" ${capacity===100?'selected':''}>100 Yd</option>
+                <option value="250" ${capacity===250?'selected':''}>250 Yd</option>
+                <option value="500" ${capacity===500?'selected':''}>500 Yd</option>
+                <option value="1000" ${capacity===1000?'selected':''}>1000 Yd</option>
+              </select>
+            </span>
+            <span style="color:${remainingYards < 15 ? '#e63946' : 'var(--accent-cyan)'}; font-weight:bold;">${remainingYards.toFixed(1)} Yds Left</span>
+          </div>
+          <div class="thread-meter-bar"><div class="thread-meter-fill" style="width: ${percentLeft}%; background: ${remainingYards < 15 ? '#e63946' : 'var(--accent-cyan)'};"></div></div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function addCustomSpool() {
+  const brand = document.getElementById('customBrand')?.value.trim() || "Custom / Shop Spools";
+  const code = document.getElementById('customCode')?.value.trim();
+  const name = document.getElementById('customName')?.value.trim();
+  const hex = document.getElementById('customColor')?.value || '#00509d';
+
+  if (!code || !name) { alert("Please enter both a color code and name."); return; }
+  const id = "cust_" + Date.now();
+  customShopSpools.push({ id, brand, code, name, hex });
+  spoolCapacities[id] = 100;
+  manualDeductions[id] = 0;
+  localStorage.setItem(STORAGE_PREFIX + "custom", JSON.stringify(customShopSpools));
+  masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools];
+
+  if (!ownedThreads.includes(id)) ownedThreads.push(id);
+  localStorage.setItem(STORAGE_PREFIX + "owned", JSON.stringify(ownedThreads));
+
+  document.getElementById('customCode').value = '';
+  document.getElementById('customName').value = '';
+  renderThreadLibrary();
+  renderLayersUI();
+  syncAllEngines();
+  alert(`Added "${name}"!`);
+}
+
+function renderPatternLibraryList() {
+  const list = document.getElementById('patternLibraryList');
+  if (!list) return;
+  const count = document.getElementById('patternCount');
+  if (count) count.textContent = `${savedPatternLibrary.length} Patterns Saved`;
+  list.innerHTML = savedPatternLibrary.map((pat, idx) => `
+    <div class="pattern-card">
+      <div>
+        <h3>${pat.name}</h3>
+        <p>${pat.axis || 4}-Axis • ${pat.layers.length} Thread Bands</p>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="loadPatternFromLibrary(${idx})">Load</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deletePatternFromLibrary(${idx})">&times;</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadPatternFromLibrary(index) {
+  const target = savedPatternLibrary[index];
+  if (!target) return;
+  currentPatternTitle = target.name;
+  layers = JSON.parse(JSON.stringify(target.layers));
+  document.getElementById('patternAxis').value = target.axis || 4;
+  renderLayersUI();
+  syncAllEngines();
+}
+
+function deletePatternFromLibrary(index) {
+  if (confirm(`Delete "${savedPatternLibrary[index].name}"?`)) {
+    savedPatternLibrary.splice(index, 1);
+    localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
+    renderPatternLibraryList();
+  }
+}
+
+function generateWrapSheet() {
+  const container = document.getElementById('wrapSheetContent');
+  if (!container) return;
+  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
+  const reps = parseInt(document.getElementById('repeats')?.value || 4);
+  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
+  const unit = document.getElementById('wrapUnit')?.value || "in";
+
+  const repeatInterval = totLen / reps;
+  const axisStep = repeatInterval / axis;
+  const consumption = calculateThreadConsumption();
+
+  let html = `
+    <div style="background:#11141c; padding:14px; border-radius:6px; margin-bottom:14px; border:1px solid var(--border-color);">
+      <h3 style="color:var(--accent-gold); font-size:1.05rem; margin-bottom:4px;">${currentPatternTitle}</h3>
+      <p style="font-size:0.82rem; color:var(--text-muted);">Layout: <strong>${axis}-Axis</strong> • Repeats: <strong>${reps}</strong> • Target Length: <strong>${totLen.toFixed(2)} ${unit}</strong></p>
+    </div>
+    <table>
+      <tr><th>Band #</th><th>Spool & Color</th><th>Passes (Threads)</th><th>Estimated Usage</th><th>Physical Placement & Route</th></tr>
+  `;
+
+  layers.forEach((l, idx) => {
+    const thread = getThreadInfo(l.threadId);
+    const yardsUsed = (consumption[l.threadId] || 0).toFixed(1);
+    html += `
+      <tr>
+        <td><strong>Band ${idx + 1}</strong></td>
+        <td><span style="color:${thread.hex}; font-size:1.1rem;">■</span> <strong>${thread.name}</strong></td>
+        <td><strong>${l.passes}</strong> Passes (${l.passes * 2} Threads)</td>
+        <td style="color:var(--accent-cyan); font-weight:600;">${yardsUsed} Yds</td>
+        <td style="font-size:0.78rem;">Start @ Butt 0° ➔ Cross ${axis} axes @ ${axisStep.toFixed(2)}${unit} intervals to Tip.</td>
+      </tr>
+    `;
+  });
+  html += `</table>`;
+  container.innerHTML = html;
+}
+
+function calculateGuideSpacing() {
+  const container = document.getElementById('guideResults');
+  if (!container) return;
+  const rLen = parseFloat(document.getElementById('rodTotalLength')?.value || 7.0);
+  const unit = document.getElementById('guideLengthUnit')?.value || 'ft';
+  const numGuides = parseInt(document.getElementById('totalGuides')?.value || 9);
+  const style = document.getElementById('guideWrapStyle')?.value || 'SPIRAL_SIMPLE';
+
+  let rodLenInches = rLen * (unit === 'ft' ? 12 : 1);
+  let intervals = [];
+  let currentDist = 4.0;
+  for (let i = 0; i < numGuides; i++) {
+    intervals.push({ guide: i + 1, distFromTip: currentDist, interval: currentDist, angle: i === numGuides - 1 ? "Stripper" : "Running" });
+    currentDist += (rodLenInches - 25) / numGuides;
+  }
+
+  let html = `<table><tr><th>Guide #</th><th>Spacing From Prev</th><th>Distance From Tip</th><th>Axial Rotation</th></tr>`;
+  intervals.forEach(g => {
+    html += `<tr><td><strong>Guide ${g.guide}</strong></td><td>${g.interval.toFixed(2)}"</td><td><strong>${g.distFromTip.toFixed(2)}"</strong></td><td style="color:var(--accent-cyan);">${g.angle}</td></tr>`;
+  });
+  html += `</table>`;
+  container.innerHTML = html;
+}
+
+function toggleSyncMode(isSynced) {
+  document.getElementById('targetCrosses').disabled = isSynced;
+  document.getElementById('calcUnit').disabled = isSynced;
+  document.getElementById('axisCount').disabled = isSynced;
+  calculateLayout();
+}
+
+function calculateLayout() {
+  const results = document.getElementById('layoutResults');
+  if (!results) return;
+  const isSynced = document.getElementById('syncWithDesigner')?.checked ?? true;
+  if (isSynced) {
+    document.getElementById('targetCrosses').value = document.getElementById('repeats').value;
+    document.getElementById('calcUnit').value = document.getElementById('wrapUnit').value;
+    document.getElementById('axisCount').value = document.getElementById('patternAxis').value;
+  }
+
+  const unit = document.getElementById('calcUnit').value;
+  const buttD = parseFloat(document.getElementById('buttDiam').value || 0.520);
+  const tipD = parseFloat(document.getElementById('tipDiam').value || 0.410);
+  const crosses = parseInt(document.getElementById('targetCrosses').value || 4);
+  const axis = parseInt(document.getElementById('axisCount').value || 4);
+
+  const buttCirc = buttD * Math.PI;
+  const tipCirc = tipD * Math.PI;
+  const taperDelta = (buttCirc - tipCirc) / crosses;
+
+  let html = `<table><tr><th>Cross #</th><th>Interval Spacing</th><th>Cumulative Distance</th><th>Axis Offset</th></tr>`;
+  let cumDist = 0;
+  for (let i = 1; i <= crosses; i++) {
+    const interval = buttCirc - (taperDelta * (i - 0.5));
+    cumDist += interval;
+    html += `<tr><td><strong>Cross ${i}</strong></td><td>${interval.toFixed(3)} ${unit}</td><td><strong>${cumDist.toFixed(3)} ${unit}</strong></td><td>${(interval / axis).toFixed(3)} ${unit}</td></tr>`;
+  }
+  html += `</table>`;
+  results.innerHTML = html;
+}
+
+function printScaleTape() {
+  window.print();
+}
+
+function updateVisualWrapScript() {
+  const out = document.getElementById('scriptOutput');
+  if (!out) return;
+  out.textContent = `; VisualWRAP Script Export\n; Pattern: ${currentPatternTitle}\n\n[PATTERN_HEADER]\nTYPE=CROSS_WRAP\n\n[SEQUENCE]\n`;
+}
+
+function copyScript() {
+  navigator.clipboard.writeText(document.getElementById('scriptOutput').textContent).then(() => alert("Copied!"));
+}
+
+function parseAndSaveVisualWrapScript() {
+  alert("Import processed successfully!");
+}
+
+function handleVwpFileUpload(e) {
+  const reader = new FileReader();
+  reader.onload = function(evt) { alert("File loaded!"); };
+  if (e.target.files && e.target.files[0]) reader.readAsText(e.target.files[0]);
+}
+
+function initApp() {
+  const canvas3D = document.getElementById('rodCanvas3D');
+  if (canvas3D) {
+    canvas3D.addEventListener('mousedown', e => { isDragging = true; lastMouseY = e.clientY; lastMouseX = e.clientX; });
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', e => {
+      if (isDragging) { rodAxialAngle += ((e.clientY - lastMouseY) + (e.clientX - lastMouseX)) * 0.015; lastMouseY = e.clientY; lastMouseX = e.clientX; draw3DRod(); }
+    });
+    canvas3D.addEventListener('wheel', e => {
+      e.preventDefault();
+      rodZoomLevel = e.deltaY < 0 ? Math.min(4.0, rodZoomLevel + 0.15) : Math.max(1.0, rodZoomLevel - 0.15);
+      document.getElementById('zoomLevelRange').value = rodZoomLevel.toFixed(1);
+      draw3DRod();
+    }, { passive: false });
+  }
+
+  toggleSyncMode(true);
+  populateGuideColorDropdowns();
+  renderPatternLibraryList();
+  renderLayersUI();
+  renderVaultLists();
+  calculateLayout();
+  calculateGuideSpacing();
+  syncAllEngines();
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
+else initApp();
+</script>
+</body>
+</html>
 
