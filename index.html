@@ -791,12 +791,10 @@ const DEFAULT_PATTERNS = [
   { name: "Maltese Cross (Interlocking)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" }, { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" } ] }
 ];
 
-const STORAGE_PREFIX = "tsp_master_v29_";
+const STORAGE_PREFIX = "tsp_master_v30_";
 let customShopSpools = [];
 let masterThreadCatalog = [...DEFAULT_CATALOG];
 let ownedThreads = ["fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908"];
-let spoolCapacities = {};
-let manualDeductions = {};
 let savedBlanksVault = [ { id: "b_arw842", name: "A.R.W. MB842 CarbonOne", length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 } ];
 let savedBuildRecipes = [];
 let savedPatternLibrary = JSON.parse(JSON.stringify(DEFAULT_PATTERNS));
@@ -964,13 +962,24 @@ function renderPattern() {
   const w = canvas.width; const h = canvas.height;
   ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, w, h);
   
-  const plotW = w - 60; const plotH = h - 60; const cellW = plotW / repeats; const centerY = plotH / 2;
+  const padLeft = 40; const padRight = 20; const plotW = w - padLeft - padRight; const plotH = h - 60; const cellW = plotW / repeats; const centerY = plotH / 2;
+  
   layers.forEach((layer, lIdx) => {
     const thread = getThreadInfo(layer.threadId);
     ctx.strokeStyle = thread.hex; ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
+    ctx.lineCap = "round";
     for (let r = 0; r < repeats; r++) {
-      const cx = 40 + (r * cellW) + (cellW / 2);
-      ctx.beginPath(); ctx.moveTo(cx - 15, centerY - 15); ctx.lineTo(cx + 15, centerY + 15); ctx.stroke();
+      const cx = padLeft + (r * cellW) + (cellW / 2);
+      let halfBox = cellW * 0.25;
+      ctx.beginPath();
+      if (layer.geo === "CROSS") {
+        ctx.moveTo(cx - halfBox, centerY - halfBox); ctx.lineTo(cx + halfBox, centerY + halfBox);
+        ctx.moveTo(cx - halfBox, centerY + halfBox); ctx.lineTo(cx + halfBox, centerY - halfBox);
+      } else {
+        ctx.moveTo(cx, centerY - halfBox); ctx.lineTo(cx + halfBox, centerY);
+        ctx.lineTo(cx, centerY + halfBox); ctx.lineTo(cx - halfBox, centerY); ctx.closePath();
+      }
+      ctx.stroke();
     }
   });
 }
@@ -990,7 +999,7 @@ function draw3DRod() {
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#d4af37"; ctx.font = "14px monospace";
-  ctx.fillText("3D Photorealistic Epoxied Rod Simulator Active (Zoom 1x-4x)", 30, canvas.height / 2);
+  ctx.fillText(`3D Epoxied Rod Simulator (${rodZoomLevel.toFixed(1)}x Zoom)`, 30, canvas.height / 2);
 }
 
 function reset3DView() { rodAxialAngle = 0; rodZoomLevel = 1.0; document.getElementById('zoomLevelRange').value = "1.0"; draw3DRod(); }
@@ -1175,13 +1184,36 @@ function calculateGuideSpacing() {
   const container = document.getElementById('guideResults');
   if (!container) return;
   const rLen = parseFloat(document.getElementById('rodTotalLength')?.value || 7.0);
+  const unit = document.getElementById('guideLengthUnit')?.value || 'ft';
   const numGuides = parseInt(document.getElementById('totalGuides')?.value || 9);
+  const style = document.getElementById('guideWrapStyle')?.value || 'SPIRAL_SIMPLE';
+
+  let rodLenInches = rLen * (unit === 'ft' ? 12 : 1);
+  let intervals = [];
   let currentDist = 4.0;
-  let html = `<table><tr><th>Guide #</th><th>Distance From Tip</th><th>Axial Rotation</th></tr>`;
   for (let i = 0; i < numGuides; i++) {
-    html += `<tr><td><strong>Guide ${i + 1}</strong></td><td><strong>${currentDist.toFixed(2)}"</strong></td><td style="color:var(--accent-cyan);">${i === numGuides - 1 ? "0° Stripper" : "180° Bottom"}</td></tr>`;
-    currentDist += (rLen * 12 - 25) / numGuides;
+    let angleStr = "180° Bottom";
+    if (style === 'SPIRAL_PROGRESSIVE') {
+      if (i === numGuides - 1) angleStr = "0° (Stripper)";
+      else if (i === numGuides - 2) angleStr = "60° Transition";
+      else if (i === numGuides - 3) angleStr = "120° Transition";
+      else angleStr = "180° (Bottom)";
+    } else if (style === 'SPIRAL_SIMPLE') {
+      if (i === numGuides - 1) angleStr = "0° (Stripper)";
+      else if (i === numGuides - 2) angleStr = "90° (Bumper)";
+      else angleStr = "180° (Bottom)";
+    } else if (style === 'CASTING_STD') {
+      angleStr = "0° Top";
+    }
+
+    intervals.push({ guide: i + 1, distFromTip: currentDist, interval: currentDist, angle: angleStr });
+    currentDist += (rodLenInches - 25) / numGuides;
   }
+
+  let html = `<table><tr><th>Guide #</th><th>Distance From Tip</th><th>Axial Rotation</th></tr>`;
+  intervals.forEach(g => {
+    html += `<tr><td><strong>Guide ${g.guide}</strong></td><td><strong>${g.distFromTip.toFixed(2)}"</strong></td><td style="color:var(--accent-cyan); font-weight:600;">${g.angle}</td></tr>`;
+  });
   html += `</table>`;
   container.innerHTML = html;
 }
@@ -1241,6 +1273,11 @@ function handleVwpFileUpload(e) {
   };
   if (e.target.files && e.target.files[0]) reader.readAsText(e.target.files[0]);
 }
+
+function stepNext() { currentStepIndex = (currentStepIndex + 1) % (flattenedThreadSteps.length + 1); renderStepCanvas(); }
+function stepPrev() { currentStepIndex = Math.max(0, currentStepIndex - 1); renderStepCanvas(); }
+function stepReset() { currentStepIndex = 0; renderStepCanvas(); }
+function stepAll() { currentStepIndex = flattenedThreadSteps.length; renderStepCanvas(); }
 
 function initApp() {
   const canvas3D = document.getElementById('rodCanvas3D');
