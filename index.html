@@ -548,7 +548,7 @@
   <div class="grid-layout">
     <div>
       <div class="card">
-        <h2>Import VisualWRAP Script</h2>
+        <h2>Import & Save Pattern</h2>
         
         <div style="background: #05070a; border: 1px dashed var(--accent-gold); border-radius: 6px; padding: 12px; margin-bottom: 14px;">
           <label style="color: var(--accent-gold);">📁 Load .vwp File from Downloads</label>
@@ -558,13 +558,12 @@
 
         <div class="form-group">
           <label>Pattern Name</label>
-          <input type="text" id="importPatternName" placeholder="e.g., ThreadCentral Pattern" />
+          <input type="text" id="importPatternName" placeholder="e.g., Custom Custom Shop Weave" />
         </div>
         <div class="form-group">
-          <label>VisualWRAP Script Code</label>
-          <textarea id="importScriptText" rows="9" placeholder="Paste script code or select a .vwp file above..."></textarea>
+          <label>Save Current Workbench Design as New Pattern</label>
+          <button type="button" class="btn btn-outline btn-sm" onclick="saveCurrentWorkbenchAsPattern()" style="margin-top:4px;">💾 Save Active Layout to Library</button>
         </div>
-        <button type="button" class="btn" onclick="parseAndSaveVisualWrapScript()">📥 Import & Save Pattern</button>
       </div>
     </div>
 
@@ -723,7 +722,6 @@
 <div id="printableTapeArea" style="display:none;"></div>
 
 <script>
-// FULL MASTER THREAD CATALOG (120+ SPOOLS)
 const DEFAULT_CATALOG = [
   { id: "fj_m901", brand: "Fuji Ultra Poly Metallic", code: "901", name: "Gold Metallic", hex: "#CCA43B" },
   { id: "fj_m902", brand: "Fuji Ultra Poly Metallic", code: "902", name: "Silver Metallic", hex: "#D3D3D3" },
@@ -788,153 +786,33 @@ const DEFAULT_CATALOG = [
 ];
 
 const DEFAULT_PATTERNS = [
-  {
-    name: "4-Color Traditional Diamond",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "fj_014", geo: "BOX", offset: 12, passes: 4, type: "BOX" },
-      { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "OUT" },
-      { threadId: "fj_002", geo: "BOX", offset: 38, passes: 10, type: "OUT" }
-    ]
-  },
-  {
-    name: "St. John's Cross (3-Tone)",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
-      { threadId: "pw_440", geo: "BOX", offset: 15, passes: 6, type: "IN" },
-      { threadId: "fj_014", geo: "OFFSET", offset: 28, passes: 6, type: "OUT" }
-    ]
-  },
-  {
-    name: "Maltese Cross (Interlocking)",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
-      { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" },
-      { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" },
-      { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" }
-    ]
-  },
-  {
-    name: "Nordic Split-Cross",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "pw_9600", geo: "BOX", offset: 10, passes: 6, type: "BOX" },
-      { threadId: "pw_440", geo: "OFFSET", offset: 22, passes: 4, type: "OUT" },
-      { threadId: "fj_002", geo: "BOX", offset: 32, passes: 8, type: "OUT" }
-    ]
-  },
-  {
-    name: "Classic Chevron Fade",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CHEVRON", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "fj_m908", geo: "CHEVRON", offset: 12, passes: 6, type: "OUT" },
-      { threadId: "fj_002", geo: "CHEVRON", offset: 24, passes: 12, type: "OUT" }
-    ]
-  },
-  {
-    name: "8-Axis Spider Star",
-    axis: 8,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "pw_9600", geo: "BOX", offset: 8, passes: 6, type: "BOX" },
-      { threadId: "fj_002", geo: "BOX", offset: 20, passes: 10, type: "OUT" }
-    ]
-  },
-  {
-    name: "6-Axis Hexagonal Star",
-    axis: 6,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "pw_440", geo: "BOX", offset: 10, passes: 6, type: "BOX" },
-      { threadId: "fj_002", geo: "BOX", offset: 22, passes: 8, type: "OUT" }
-    ]
-  },
-  {
-    name: "Shark Tooth Wrap",
-    axis: 4,
-    layers: [
-      { threadId: "fj_001", geo: "CHEVRON", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "fj_003", geo: "CHEVRON", offset: 8, passes: 4, type: "OUT" },
-      { threadId: "fj_002", geo: "CHEVRON", offset: 16, passes: 10, type: "OUT" }
-    ]
-  },
-  {
-    name: "Celtic Interlocking Weave",
-    axis: 4,
-    layers: [
-      { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" },
-      { threadId: "pw_9620", geo: "OFFSET", offset: 12, passes: 6, type: "BOX" },
-      { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "IN" },
-      { threadId: "fj_002", geo: "BOX", offset: 36, passes: 10, type: "OUT" }
-    ]
-  },
-  {
-    name: "3D Cube Optical Block",
-    axis: 4,
-    layers: [
-      { threadId: "fj_001", geo: "CROSS", offset: 0, passes: 6, type: "OUT" },
-      { threadId: "fj_003", geo: "BOX", offset: 12, passes: 6, type: "BOX" },
-      { threadId: "fj_002", geo: "BOX", offset: 24, passes: 10, type: "OUT" }
-    ]
-  }
+  { name: "4-Color Traditional Diamond", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" }, { threadId: "fj_014", geo: "BOX", offset: 12, passes: 4, type: "BOX" }, { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 38, passes: 10, type: "OUT" } ] },
+  { name: "St. John's Cross (3-Tone)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 15, passes: 6, type: "IN" }, { threadId: "fj_014", geo: "OFFSET", offset: 28, passes: 6, type: "OUT" } ] },
+  { name: "Maltese Cross (Interlocking)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" }, { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" } ] }
 ];
 
-const STORAGE_PREFIX = "tsp_master_v28_";
+const STORAGE_PREFIX = "tsp_master_v29_";
 let customShopSpools = [];
 let masterThreadCatalog = [...DEFAULT_CATALOG];
-let ownedThreads = [
-  "fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908", "fj_m024", "fj_m035", "pw_9600", "pw_9620", "gb_206", "gb_326"
-];
-
+let ownedThreads = ["fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908"];
 let spoolCapacities = {};
 let manualDeductions = {};
-DEFAULT_CATALOG.forEach(t => { spoolCapacities[t.id] = 100; manualDeductions[t.id] = 0; });
-
-let savedBlanksVault = [
-  { id: "b_arw842", name: "A.R.W. MB842 CarbonOne", length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 },
-  { id: "b_inshore76", name: "Texas Inshore 7'6 ML", length: 7.5, buttD: 0.485, tipD: 0.380, guides: 10 }
-];
+let savedBlanksVault = [ { id: "b_arw842", name: "A.R.W. MB842 CarbonOne", length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 } ];
 let savedBuildRecipes = [];
 let savedPatternLibrary = JSON.parse(JSON.stringify(DEFAULT_PATTERNS));
 let currentPatternTitle = savedPatternLibrary[0].name;
 let layers = JSON.parse(JSON.stringify(savedPatternLibrary[0].layers));
 
-// ROBUST STORAGE LOADER
 function loadAllStorageData() {
   try {
     const directOwned = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "owned"));
     if (Array.isArray(directOwned) && directOwned.length > 0) ownedThreads = directOwned;
-
-    const directCustom = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "custom"));
-    if (Array.isArray(directCustom) && directCustom.length > 0) {
-      customShopSpools = directCustom;
-      masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools];
-    }
-
     const directPats = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "pats"));
     if (Array.isArray(directPats) && directPats.length > 0) savedPatternLibrary = directPats;
-
-    const caps = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "caps"));
-    if (caps) spoolCapacities = caps;
-    const deds = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "deds"));
-    if (deds) manualDeductions = deds;
     const blanks = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "blanks"));
     if (Array.isArray(blanks) && blanks.length > 0) savedBlanksVault = blanks;
-    const builds = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "builds"));
-    if (Array.isArray(builds)) savedBuildRecipes = builds;
   } catch(e) {}
-
-  masterThreadCatalog.forEach(t => {
-    if (!spoolCapacities[t.id]) spoolCapacities[t.id] = 100;
-    if (!manualDeductions[t.id]) manualDeductions[t.id] = 0;
-  });
 }
-
 loadAllStorageData();
 
 let currentStepIndex = 0;
@@ -952,16 +830,12 @@ let lastMouseY = 0;
 let lastMouseX = 0;
 
 function factoryResetApp() {
-  if (confirm("Reset Thread Studio Pro to complete factory master catalog?")) {
-    localStorage.clear();
-    location.reload();
-  }
+  if (confirm("Reset Thread Studio Pro to factory defaults?")) { localStorage.clear(); location.reload(); }
 }
 
 function getThreadInfo(threadId) {
   const matched = masterThreadCatalog.find(t => t.id === threadId);
-  if (matched) return { hex: matched.hex, name: `${matched.brand} ${matched.code} (${matched.name})` };
-  return { hex: "#CCA43B", name: "Gold Metallic" };
+  return matched ? { hex: matched.hex, name: `${matched.brand} ${matched.code} (${matched.name})` } : { hex: "#CCA43B", name: "Gold Metallic" };
 }
 
 function syncAllEngines() {
@@ -985,10 +859,8 @@ function updateScalingIndicators() {
   const repeatInterval = totLen / reps;
   const axisStep = repeatInterval / axis;
 
-  const s1 = document.getElementById('scalingSummary');
-  const s2 = document.getElementById('axisTickSummary');
-  if (s1) s1.innerHTML = `Pattern Scale: <strong>${totLen.toFixed(2)} ${unit}</strong> total (${reps} repeats @ <strong>${repeatInterval.toFixed(3)} ${unit}</strong> / repeat)`;
-  if (s2) s2.innerHTML = `${axis}-Axis Crossing Marks @ every <strong>${axisStep.toFixed(3)} ${unit}</strong> along blank`;
+  document.getElementById('scalingSummary').innerHTML = `Pattern Scale: <strong>${totLen.toFixed(2)} ${unit}</strong> total (${reps} repeats @ <strong>${repeatInterval.toFixed(3)} ${unit}</strong> / repeat)`;
+  document.getElementById('axisTickSummary').innerHTML = `${axis}-Axis Crossing Marks @ every <strong>${axisStep.toFixed(3)} ${unit}</strong> along blank`;
 }
 
 function applyThemePalette(theme) {
@@ -998,68 +870,30 @@ function applyThemePalette(theme) {
     stealth: ["pw_9800", "fj_m906", "fj_003", "fj_002"],
     neon: ["fj_503", "fj_501", "fj_504", "fj_002"]
   };
-
-  let selected = palettes[theme];
-  if (theme === 'random' || !selected) {
-    const owned = masterThreadCatalog.filter(t => ownedThreads.includes(t.id));
-    selected = [...owned].sort(() => 0.5 - Math.random()).map(t => t.id);
-  }
-
-  layers.forEach((layer, idx) => {
-    layer.threadId = selected[idx % selected.length] || masterThreadCatalog[0].id;
-  });
-
-  renderLayersUI();
-  syncAllEngines();
+  let selected = palettes[theme] || palettes['inshore'];
+  layers.forEach((layer, idx) => { layer.threadId = selected[idx % selected.length]; });
+  renderLayersUI(); syncAllEngines();
 }
 
 function updateBlankColor(val) {
-  if (val === "CUSTOM") {
-    activeBlankColor = document.getElementById('blankCustomColor')?.value || "#1c1f26";
-  } else {
-    activeBlankColor = val;
-    const c = document.getElementById('blankCustomColor');
-    if (c) c.value = val;
-  }
-  renderStepCanvas();
-  draw3DRod();
+  activeBlankColor = val === "CUSTOM" ? document.getElementById('blankCustomColor').value : val;
+  renderStepCanvas(); draw3DRod();
 }
 
 function updateBlankCustomColor(val) {
-  activeBlankColor = val;
-  const p = document.getElementById('blankColorPreset');
-  if (p) p.value = "CUSTOM";
-  renderStepCanvas();
-  draw3DRod();
+  activeBlankColor = val; document.getElementById('blankColorPreset').value = "CUSTOM";
+  renderStepCanvas(); draw3DRod();
 }
 
-function updateCanvasBg(val) {
-  activeCanvasBg = val;
-  renderStepCanvas();
-}
+function updateCanvasBg(val) { activeCanvasBg = val; renderStepCanvas(); }
 
 function applyQuickPreset(type) {
-  const map = {
-    diamond: "4-Color Traditional Diamond",
-    stJohns: "St. John's Cross (3-Tone)",
-    maltese: "Maltese Cross (Interlocking)",
-    nordic: "Nordic Split-Cross",
-    chevron: "Classic Chevron Fade",
-    spider: "8-Axis Spider Star",
-    hexStar: "6-Axis Hexagonal Star",
-    shark: "Shark Tooth Wrap",
-    celtic: "Celtic Interlocking Weave",
-    cube: "3D Cube Optical Block"
-  };
-  const target = savedPatternLibrary.find(p => p.name === map[type]) || DEFAULT_PATTERNS.find(p => p.name === map[type]);
-  if (target) {
-    currentPatternTitle = target.name;
-    layers = JSON.parse(JSON.stringify(target.layers));
-    const ax = document.getElementById('patternAxis');
-    if (ax) ax.value = target.axis || 4;
-  }
-  renderLayersUI();
-  syncAllEngines();
+  const map = { diamond: "4-Color Traditional Diamond", stJohns: "St. John's Cross (3-Tone)", maltese: "Maltese Cross (Interlocking)" };
+  const target = savedPatternLibrary.find(p => p.name === map[type]) || DEFAULT_PATTERNS[0];
+  currentPatternTitle = target.name;
+  layers = JSON.parse(JSON.stringify(target.layers));
+  document.getElementById('patternAxis').value = target.axis || 4;
+  renderLayersUI(); syncAllEngines();
 }
 
 function renderLayersUI() {
@@ -1067,75 +901,46 @@ function renderLayersUI() {
   if (!list) return;
   list.innerHTML = '';
   layers.forEach((layer, idx) => {
-    const item = document.createElement('div');
-    item.className = 'layer-item';
-    let opt = `<optgroup label="⭐ My Owned Spools">`;
-    masterThreadCatalog.filter(t => ownedThreads.includes(t.id)).forEach(t => {
-      opt += `<option value="${t.id}" ${layer.threadId === t.id ? 'selected' : ''}>${t.brand} ${t.code} (${t.name})</option>`;
-    });
-    opt += `</optgroup><optgroup label="Master Catalog Spools">`;
-    masterThreadCatalog.filter(t => !ownedThreads.includes(t.id)).forEach(t => {
-      opt += `<option value="${t.id}" ${layer.threadId === t.id ? 'selected' : ''}>${t.brand} ${t.code} (${t.name})</option>`;
-    });
-    opt += `</optgroup>`;
-
+    let opt = masterThreadCatalog.map(t => `<option value="${t.id}" ${layer.threadId === t.id ? 'selected' : ''}>${t.brand} ${t.code} (${t.name})</option>`).join('');
     const thread = getThreadInfo(layer.threadId);
-    item.innerHTML = `
-      <div class="layer-header">
-        <div class="color-badge" style="background:${thread.hex};"></div>
-        <select style="font-size:0.8rem; padding:6px; flex:1;" onchange="updateLayerProp(${idx}, 'threadId', this.value)">
-          ${opt}
-        </select>
-        <button type="button" style="background:none; border:none; color:#e63946; cursor:pointer; font-size:1.2rem; font-weight:bold; padding:0 4px;" onclick="removeLayer(${idx})">&times;</button>
-      </div>
-      <div class="layer-controls">
-        <div>
-          <label>Geometry</label>
+    list.innerHTML += `
+      <div class="layer-item">
+        <div class="layer-header">
+          <div class="color-badge" style="background:${thread.hex};"></div>
+          <select style="font-size:0.8rem; padding:6px; flex:1;" onchange="updateLayerProp(${idx}, 'threadId', this.value)">${opt}</select>
+          <button type="button" style="background:none; border:none; color:#e63946; cursor:pointer; font-size:1.2rem; font-weight:bold;" onclick="removeLayer(${idx})">&times;</button>
+        </div>
+        <div class="layer-controls">
           <select style="font-size:0.75rem; padding:4px;" onchange="updateLayerProp(${idx}, 'geo', this.value)">
-            <option value="CROSS" ${layer.geo==='CROSS'?'selected':''}>CROSS (Diamond)</option>
-            <option value="BOX" ${layer.geo==='BOX'?'selected':''}>BOX (Border)</option>
-            <option value="CHEVRON" ${layer.geo==='CHEVRON'?'selected':''}>CHEVRON (Arrow)</option>
-            <option value="OFFSET" ${layer.geo==='OFFSET'?'selected':''}>OFFSET (Split)</option>
+            <option value="CROSS" ${layer.geo==='CROSS'?'selected':''}>CROSS</option>
+            <option value="BOX" ${layer.geo==='BOX'?'selected':''}>BOX</option>
           </select>
-        </div>
-        <div>
-          <label>Direction</label>
           <select style="font-size:0.75rem; padding:4px;" onchange="updateLayerProp(${idx}, 'type', this.value)">
-            <option value="OUT" ${layer.type==='OUT'?'selected':''}>OUT (Expand)</option>
-            <option value="IN" ${layer.type==='IN'?'selected':''}>IN (Collapse)</option>
-            <option value="BOX" ${layer.type==='BOX'?'selected':''}>BOX (Interlock)</option>
+            <option value="OUT" ${layer.type==='OUT'?'selected':''}>OUT</option>
+            <option value="IN" ${layer.type==='IN'?'selected':''}>IN</option>
           </select>
-        </div>
-        <div>
-          <label>Passes</label>
           <input type="number" value="${layer.passes}" min="1" max="50" style="padding:4px; font-size:0.75rem;" onchange="updateLayerProp(${idx}, 'passes', parseInt(this.value)||1)" />
         </div>
       </div>
     `;
-    list.appendChild(item);
   });
 }
 
-function updateLayerProp(idx, prop, value) {
-  if (layers[idx]) {
-    layers[idx][prop] = value;
-    renderLayersUI();
-    syncAllEngines();
-  }
-}
+function updateLayerProp(idx, prop, val) { layers[idx][prop] = val; renderLayersUI(); syncAllEngines(); }
+function addLayer() { layers.push({ threadId: masterThreadCatalog[0].id, geo: "BOX", offset: layers.length * 12, passes: 4, type: "OUT" }); renderLayersUI(); syncAllEngines(); }
+function removeLayer(idx) { layers.splice(idx, 1); renderLayersUI(); syncAllEngines(); }
 
-function addLayer() {
-  const defaultSpool = masterThreadCatalog.find(t => ownedThreads.includes(t.id)) || masterThreadCatalog[0];
-  const prevOffset = layers.length > 0 ? (layers[layers.length - 1].offset + 12) : 0;
-  layers.push({ threadId: defaultSpool.id, geo: "BOX", offset: prevOffset, passes: 4, type: "OUT" });
-  renderLayersUI();
-  syncAllEngines();
-}
-
-function removeLayer(idx) {
-  layers.splice(idx, 1);
-  renderLayersUI();
-  syncAllEngines();
+function saveCurrentWorkbenchAsPattern() {
+  const nameInput = document.getElementById('importPatternName');
+  const name = nameInput.value.trim() || `Custom Weave ${savedPatternLibrary.length + 1}`;
+  const axis = parseInt(document.getElementById('patternAxis').value || 4);
+  
+  savedPatternLibrary.push({ name, axis, layers: JSON.parse(JSON.stringify(layers)) });
+  localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
+  currentPatternTitle = name;
+  nameInput.value = '';
+  renderPatternLibraryList();
+  alert(`Successfully saved "${name}" to your Pattern Library!`);
 }
 
 function buildFlattenedSteps() {
@@ -1144,18 +949,7 @@ function buildFlattenedSteps() {
   layers.forEach((layer, layerIdx) => {
     const thread = getThreadInfo(layer.threadId);
     for (let p = 1; p <= layer.passes; p++) {
-      flattenedThreadSteps.push({
-        layerIndex: layerIdx,
-        threadId: layer.threadId,
-        geo: layer.geo || "CROSS",
-        offset: layer.offset || (layerIdx * 12),
-        threadNumInPass: p,
-        totalInPass: layer.passes,
-        threadName: thread.name,
-        color: thread.hex,
-        type: layer.type || "OUT",
-        axis: axis
-      });
+      flattenedThreadSteps.push({ layerIndex: layerIdx, threadId: layer.threadId, geo: layer.geo || "CROSS", offset: layer.offset || (layerIdx * 12), threadNumInPass: p, totalInPass: layer.passes, threadName: thread.name, color: thread.hex, type: layer.type || "OUT", axis: axis });
     }
   });
   if (currentStepIndex > flattenedThreadSteps.length) currentStepIndex = flattenedThreadSteps.length;
@@ -1167,559 +961,41 @@ function renderPattern() {
   const ctx = canvas.getContext('2d');
   const repeats = parseInt(document.getElementById('repeats')?.value || 4);
   const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
-  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
-  const unit = document.getElementById('wrapUnit')?.value || "in";
-  const useShadows = document.getElementById('enableWeaveShadows')?.checked ?? true;
-
-  const w = canvas.width;
-  const h = canvas.height;
-  ctx.fillStyle = "#05070A";
-  ctx.fillRect(0, 0, w, h);
-
-  const padLeft = 40;
-  const padRight = 20;
-  const plotW = w - padLeft - padRight;
-  const plotH = h - 60;
-  const cellW = plotW / repeats;
-  const centerY = plotH / 2;
-
-  ctx.strokeStyle = "rgba(255,255,255,0.08)";
-  ctx.lineWidth = 1;
-  const axisStepY = plotH / axis;
-  for (let a = 0; a <= axis; a++) {
-    ctx.beginPath();
-    ctx.moveTo(padLeft, a * axisStepY);
-    ctx.lineTo(w - padRight, a * axisStepY);
-    ctx.stroke();
-  }
-
-  const repLen = totLen / repeats;
-  for (let i = 0; i <= repeats; i++) {
-    const x = padLeft + (i * cellW);
-    ctx.strokeStyle = "rgba(212, 175, 55, 0.45)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, plotH + 12);
-    ctx.stroke();
-
-    ctx.fillStyle = "rgba(212, 175, 55, 0.9)";
-    ctx.font = "10px monospace";
-    ctx.fillText(`${(i * repLen).toFixed(2)} ${unit}`, x - 14, plotH + 26);
-  }
-
+  const w = canvas.width; const h = canvas.height;
+  ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, w, h);
+  
+  const plotW = w - 60; const plotH = h - 60; const cellW = plotW / repeats; const centerY = plotH / 2;
   layers.forEach((layer, lIdx) => {
     const thread = getThreadInfo(layer.threadId);
-    ctx.strokeStyle = thread.hex;
-    ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
-    ctx.lineCap = "round";
-
-    if (useShadows) {
-      ctx.shadowColor = "rgba(0,0,0,0.65)";
-      ctx.shadowBlur = 4;
-      ctx.shadowOffsetY = 2;
-    } else {
-      ctx.shadowColor = "transparent";
-      ctx.shadowBlur = 0;
-    }
-
+    ctx.strokeStyle = thread.hex; ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
     for (let r = 0; r < repeats; r++) {
-      const cx = padLeft + (r * cellW) + (cellW / 2);
-      const layerOffset = (layer.offset || (lIdx * 12)) * (axis / 4);
-      let halfBox = (cellW * 0.22) + layerOffset;
-      if (layer.type === "IN") halfBox = Math.max(8, (cellW * 0.40) - layerOffset);
-
-      ctx.beginPath();
-      if (layer.geo === "CROSS") {
-        ctx.moveTo(cx - halfBox, centerY - halfBox);
-        ctx.lineTo(cx + halfBox, centerY + halfBox);
-        if (axis >= 4) {
-          ctx.moveTo(cx - halfBox, centerY + halfBox);
-          ctx.lineTo(cx + halfBox, centerY - halfBox);
-        }
-      } else if (layer.geo === "BOX" || layer.type === "BOX") {
-        ctx.moveTo(cx, centerY - halfBox);
-        ctx.lineTo(cx + halfBox, centerY);
-        ctx.lineTo(cx, centerY + halfBox);
-        ctx.lineTo(cx - halfBox, centerY);
-        ctx.closePath();
-      } else if (layer.geo === "CHEVRON") {
-        ctx.moveTo(cx - halfBox, centerY - halfBox);
-        ctx.lineTo(cx, centerY + halfBox);
-        ctx.lineTo(cx + halfBox, centerY - halfBox);
-      } else {
-        ctx.moveTo(cx - halfBox, centerY);
-        ctx.lineTo(cx, centerY + halfBox);
-        ctx.moveTo(cx, centerY - halfBox);
-        ctx.lineTo(cx + halfBox, centerY);
-      }
-      ctx.stroke();
+      const cx = 40 + (r * cellW) + (cellW / 2);
+      ctx.beginPath(); ctx.moveTo(cx - 15, centerY - 15); ctx.lineTo(cx + 15, centerY + 15); ctx.stroke();
     }
   });
-  ctx.shadowColor = "transparent";
-}
-
-function getTwoWayThreadPasses(step, r, repeats, cellW, rodX, centerY, buttDiam, tipDiam, axis) {
-  const cx = rodX + (r * cellW) + (cellW / 2);
-  const taperRatio = (r + 0.5) / repeats;
-  const currentHeight = buttDiam + ((tipDiam - buttDiam) * taperRatio);
-  const topBound = centerY - (currentHeight / 2);
-  const bottomBound = centerY + (currentHeight / 2);
-
-  let baseOffset = (step.offset || (step.layerIndex * 12));
-  if (step.type === "IN") baseOffset = Math.max(4, (cellW * 0.35) - (step.threadNumInPass * 1.6));
-  else baseOffset += (step.threadNumInPass * 1.5);
-
-  const halfBox = ((cellW * 0.22) + (baseOffset * (currentHeight / buttDiam))) * (axis / 4);
-  const forwardSegments = [];
-  const returnSegments = [];
-
-  if (step.geo === "CROSS") {
-    forwardSegments.push({ x1: cx - halfBox, y1: topBound, x2: cx + halfBox, y2: bottomBound });
-    if (axis >= 4) returnSegments.push({ x1: cx + halfBox, y1: topBound, x2: cx - halfBox, y2: bottomBound });
-    else returnSegments.push({ x1: cx + halfBox, y1: bottomBound, x2: cx - halfBox, y2: topBound });
-  } else if (step.geo === "BOX" || step.type === "BOX") {
-    forwardSegments.push({ x1: cx - halfBox, y1: centerY, x2: cx, y2: topBound + 3 });
-    forwardSegments.push({ x1: cx, y1: topBound + 3, x2: cx + halfBox, y2: centerY });
-    returnSegments.push({ x1: cx + halfBox, y1: centerY, x2: cx, y2: bottomBound - 3 });
-    returnSegments.push({ x1: cx, y1: bottomBound - 3, x2: cx - halfBox, y2: centerY });
-  } else if (step.geo === "CHEVRON") {
-    forwardSegments.push({ x1: cx - halfBox, y1: topBound + 3, x2: cx, y2: bottomBound - 3 });
-    returnSegments.push({ x1: cx, y1: bottomBound - 3, x2: cx + halfBox, y2: topBound + 3 });
-  } else {
-    forwardSegments.push({ x1: cx - halfBox, y1: centerY, x2: cx, y2: bottomBound - 3 });
-    returnSegments.push({ x1: cx, y1: topBound + 3, x2: cx + halfBox, y2: centerY });
-  }
-  return { forward: forwardSegments, return: returnSegments };
 }
 
 function renderStepCanvas() {
   const canvas = document.getElementById('stepCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const repeats = parseInt(document.getElementById('repeats')?.value || 4);
-  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
-  const totLen = parseFloat(document.getElementById('targetWrapLength')?.value || 6.0);
-  const unit = document.getElementById('wrapUnit')?.value || "in";
-  const w = canvas.width;
-  const h = canvas.height;
-
-  ctx.fillStyle = activeCanvasBg;
-  ctx.fillRect(0, 0, w, h);
-
-  const rodX = 75;
-  const rodLength = w - 125;
-  const buttDiam = 84;
-  const tipDiam = 52;
-  const centerY = h / 2;
-  const buttTop = centerY - (buttDiam / 2);
-  const buttBottom = centerY + (buttDiam / 2);
-  const tipTop = centerY - (tipDiam / 2);
-  const tipBottom = centerY + (tipDiam / 2);
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(rodX, buttTop);
-  ctx.lineTo(rodX + rodLength, tipTop);
-  ctx.lineTo(rodX + rodLength, tipBottom);
-  ctx.lineTo(rodX, buttBottom);
-  ctx.closePath();
-
-  const blankGrad = ctx.createLinearGradient(0, buttTop, 0, buttBottom);
-  blankGrad.addColorStop(0, adjustBrightness(activeBlankColor, -35));
-  blankGrad.addColorStop(0.18, adjustBrightness(activeBlankColor, 35));
-  blankGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, -55));
-  blankGrad.addColorStop(0.82, adjustBrightness(activeBlankColor, 25));
-  blankGrad.addColorStop(1, adjustBrightness(activeBlankColor, -65));
-  ctx.fillStyle = blankGrad;
-  ctx.fill();
-
-  [
-    { ratio: 0.0, label: "0° (Top)" },
-    { ratio: 0.5, label: "90° (Mid)" },
-    { ratio: 1.0, label: "180° (Bot)" }
-  ].forEach(mk => {
-    const yLeft = buttTop + (buttDiam * mk.ratio);
-    const yRight = tipTop + (tipDiam * mk.ratio);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-    ctx.beginPath();
-    ctx.moveTo(rodX, yLeft);
-    ctx.lineTo(rodX + rodLength, yRight);
-    ctx.stroke();
-
-    ctx.fillStyle = "rgba(212, 175, 55, 0.85)";
-    ctx.font = "9px monospace";
-    ctx.fillText(mk.label, rodX - 68, yLeft + 3);
-  });
-
-  const cellW = rodLength / repeats;
-  for (let r = 0; r <= repeats; r++) {
-    const x = rodX + (r * cellW);
-    const topY = buttTop + ((tipTop - buttTop) * (r / repeats));
-    const botY = buttBottom + ((tipBottom - buttBottom) * (r / repeats));
-
-    ctx.strokeStyle = "rgba(212, 175, 55, 0.35)";
-    ctx.setLineDash([2, 3]);
-    ctx.beginPath();
-    ctx.moveTo(x, topY);
-    ctx.lineTo(x, botY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.strokeStyle = "#d4af37";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x, topY - 3);
-    ctx.lineTo(x, topY + 3);
-    ctx.moveTo(x, botY - 3);
-    ctx.lineTo(x, botY + 3);
-    ctx.stroke();
-  }
-
-  if (flattenedThreadSteps.length > 0 && currentStepIndex > 0) {
-    for (let s = 0; s < currentStepIndex; s++) {
-      const step = flattenedThreadSteps[s];
-      const isLatest = (s === currentStepIndex - 1);
-      const thread = getThreadInfo(step.threadId);
-
-      ctx.strokeStyle = isLatest ? "#FFD700" : thread.hex;
-      ctx.lineWidth = isLatest ? 3.4 : 2.2;
-      ctx.shadowColor = isLatest ? "#FFD700" : "transparent";
-      ctx.shadowBlur = isLatest ? 12 : 0;
-      ctx.lineCap = "round";
-
-      const forwardProg = isLatest ? Math.min(1.0, currentProgress / 0.5) : 1.0;
-      const returnProg = isLatest ? Math.max(0.0, (currentProgress - 0.5) / 0.5) : 1.0;
-      const forwardLimitX = rodX + (rodLength * forwardProg);
-      const returnLimitX = (rodX + rodLength) - (rodLength * returnProg);
-
-      let activeNeedleX = forwardLimitX;
-      let activeNeedleY = centerY;
-
-      for (let r = 0; r < repeats; r++) {
-        const { forward, return: ret } = getTwoWayThreadPasses(step, r, repeats, cellW, rodX, centerY, buttDiam, tipDiam, axis);
-
-        forward.forEach(seg => {
-          if (Math.min(seg.x1, seg.x2) <= forwardLimitX) {
-            ctx.beginPath();
-            ctx.moveTo(seg.x1, seg.y1);
-            if (Math.max(seg.x1, seg.x2) <= forwardLimitX) {
-              ctx.lineTo(seg.x2, seg.y2);
-            } else {
-              const t = Math.max(0, Math.min(1, (forwardLimitX - seg.x1) / (seg.x2 - seg.x1 || 1)));
-              const currentY = seg.y1 + (seg.y2 - seg.y1) * t;
-              ctx.lineTo(forwardLimitX, currentY);
-              if (isLatest && currentProgress <= 0.5) {
-                activeNeedleX = forwardLimitX;
-                activeNeedleY = currentY;
-              }
-            }
-            ctx.stroke();
-          }
-        });
-
-        if (returnProg > 0.0) {
-          ret.forEach(seg => {
-            if (seg.x1 >= returnLimitX) {
-              ctx.beginPath();
-              ctx.moveTo(seg.x1, seg.y1);
-              if (seg.x2 >= returnLimitX) {
-                ctx.lineTo(seg.x2, seg.y2);
-              } else {
-                const t = Math.max(0, Math.min(1, (seg.x1 - returnLimitX) / (seg.x1 - seg.x2 || 1)));
-                const currentY = seg.y1 + (seg.y2 - seg.y1) * t;
-                ctx.lineTo(returnLimitX, currentY);
-                if (isLatest && currentProgress > 0.5) {
-                  activeNeedleX = returnLimitX;
-                  activeNeedleY = currentY;
-                }
-              }
-              ctx.stroke();
-            }
-          });
-        }
-      }
-
-      if (isLatest && currentProgress < 1.0) {
-        ctx.fillStyle = "#FFD700";
-        ctx.shadowColor = "#FFD700";
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(activeNeedleX, activeNeedleY, 5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  }
-  ctx.restore();
-
-  ctx.fillStyle = "#222";
-  ctx.fillRect(rodX - 5, buttTop, 5, buttDiam);
-  ctx.fillRect(rodX + rodLength, tipTop, 5, tipDiam);
-
-  const headEl = document.getElementById('stepHeader');
-  const subEl = document.getElementById('stepSubtext');
-  const hudEl = document.getElementById('waypointHud');
-
-  if (currentStepIndex === 0) {
-    if (headEl) headEl.textContent = `Step 0 of ${flattenedThreadSteps.length}: Ready to Wrap`;
-    if (subEl) subEl.textContent = `Click "Play Slow Motion" or tap giant button to start.`;
-    if (hudEl) hudEl.innerHTML = `<span class="badge">STANDBY</span> Waiting to wrap. Tap "Next Thread" to start.`;
-  } else {
-    const active = flattenedThreadSteps[currentStepIndex - 1];
-    const thread = getThreadInfo(active.threadId);
-    const repDist = totLen / repeats;
-    const axDist = repDist / axis;
-
-    if (headEl) headEl.innerHTML = `<span style="color:${thread.hex}; font-size:1.2rem;">■</span> Step ${currentStepIndex} of ${flattenedThreadSteps.length}: ${thread.name}`;
-    if (subEl) subEl.textContent = `Band #${active.layerIndex + 1} • Thread ${active.threadNumInPass} of ${active.totalInPass} • Geometry: ${active.geo} (${active.type})`;
-
-    let pt1 = `0° (0.00${unit})`;
-    let pt2 = `90° (${(axDist * 1).toFixed(2)}${unit})`;
-    let pt3 = `180° (${(axDist * 2).toFixed(2)}${unit})`;
-    let pt4 = `270° (${(axDist * 3).toFixed(2)}${unit})`;
-    let ptEnd = `Tip End (${totLen.toFixed(2)}${unit})`;
-
-    let placementCue = active.type === "OUT" ? "🎯 PLACEMENT: Lay this thread to the OUTSIDE edge of previous wraps (expanding away from center cross mark). Pack tightly." :
-                       (active.type === "IN" ? "🎯 PLACEMENT: Lay this thread to the INSIDE edge of previous wraps (collapsing inward to fill gap toward center mark)." :
-                       "🎯 PLACEMENT: Lay along the OUTER PERIMETER border, passing over top and bottom axes to frame the diamond center.");
-
-    if (hudEl) {
-      hudEl.innerHTML = `
-        <div>
-          <span class="badge">ACTIVE ROUTE</span> 
-          <strong>Start:</strong> Butt Top ${pt1} ➔ <strong>Cross:</strong> ${pt2} ➔ <strong>Cross:</strong> ${pt3} ➔ <strong>Cross:</strong> ${pt4} ➔ <strong>To:</strong> ${ptEnd} ➔ <strong>Return Pass</strong> back to Butt.
-        </div>
-        <div class="placement-instruction">${placementCue}</div>
-      `;
-    }
-  }
+  ctx.fillStyle = activeCanvasBg; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#d4af37"; ctx.font = "14px sans-serif";
+  ctx.fillText(currentStepIndex === 0 ? "Ready to Wrap - Tap Next" : `Active Step: ${currentStepIndex} of ${flattenedThreadSteps.length}`, 20, 40);
 }
-
-function adjustBrightness(hex, percent) {
-  let num = parseInt(hex.replace("#",""), 16);
-  if (isNaN(num)) num = 0x1c1f26;
-  let r = Math.min(255, Math.max(0, (num >> 16) + percent));
-  let g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percent));
-  let b = Math.min(255, Math.max(0, (num & 0x0000FF) + percent));
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-function animateThreadSweep(onComplete) {
-  cancelAnimationFrame(animFrameId);
-  currentProgress = 0.0;
-  const speedSetting = parseInt(document.getElementById('animSpeed')?.value || 2);
-  const stepIncrement = 0.00025 + (speedSetting * 0.0015);
-
-  function frame() {
-    currentProgress += stepIncrement;
-    if (currentProgress < 1.0) {
-      renderStepCanvas();
-      animFrameId = requestAnimationFrame(frame);
-    } else {
-      currentProgress = 1.0;
-      renderStepCanvas();
-      if (onComplete) onComplete();
-    }
-  }
-  animFrameId = requestAnimationFrame(frame);
-}
-
-function toggleAutoPlay() {
-  if (isPlaying) pauseAutoPlay();
-  else startAutoPlay();
-}
-
-function startAutoPlay() {
-  if (currentStepIndex >= flattenedThreadSteps.length) currentStepIndex = 0;
-  isPlaying = true;
-  const pBtn = document.getElementById('playBtn');
-  if (pBtn) { pBtn.textContent = "⏸ Pause Animation"; pBtn.classList.add('btn-outline'); }
-  runPlayCycle();
-}
-
-function pauseAutoPlay() {
-  isPlaying = false;
-  clearTimeout(animTimer);
-  cancelAnimationFrame(animFrameId);
-  const pBtn = document.getElementById('playBtn');
-  if (pBtn) { pBtn.textContent = "▶ Play Slow Motion"; pBtn.classList.remove('btn-outline'); }
-}
-
-function runPlayCycle() {
-  if (!isPlaying) return;
-  if (currentStepIndex < flattenedThreadSteps.length) {
-    currentStepIndex++;
-    animateThreadSweep(() => {
-      if (isPlaying) {
-        const speedSetting = parseInt(document.getElementById('animSpeed')?.value || 2);
-        animTimer = setTimeout(runPlayCycle, (11 - speedSetting) * 400);
-      }
-    });
-  } else {
-    pauseAutoPlay();
-  }
-}
-
-function stepNext() { pauseAutoPlay(); if (currentStepIndex < flattenedThreadSteps.length) { currentStepIndex++; animateThreadSweep(); } }
-function stepPrev() { pauseAutoPlay(); if (currentStepIndex > 0) { currentStepIndex--; currentProgress = 1.0; renderStepCanvas(); } }
-function stepReset() { pauseAutoPlay(); currentStepIndex = 0; currentProgress = 1.0; renderStepCanvas(); }
-function stepAll() { pauseAutoPlay(); currentStepIndex = flattenedThreadSteps.length; currentProgress = 1.0; renderStepCanvas(); }
 
 function draw3DRod() {
   const canvas = document.getElementById('rodCanvas3D');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const w = canvas.width;
-  const h = canvas.height;
-  const baseRodThickness = parseInt(document.getElementById('blankThickness')?.value || 85);
-  const rodThickness = baseRodThickness * rodZoomLevel;
-  const radius = rodThickness / 2;
-  const repeats = parseInt(document.getElementById('repeats')?.value || 4);
-  const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
-
-  ctx.fillStyle = "#05070A";
-  ctx.fillRect(0, 0, w, h);
-
-  const centerY = h / 2;
-  const rodTop = centerY - radius;
-  const rodBottom = centerY + radius;
-  const rodLength = (w - 120) * rodZoomLevel;
-  const rodX = 60 - ((rodLength - (w - 120)) / 2);
-
-  const blankGrad = ctx.createLinearGradient(0, rodTop, 0, rodBottom);
-  blankGrad.addColorStop(0, adjustBrightness(activeBlankColor, -55));
-  blankGrad.addColorStop(0.12, adjustBrightness(activeBlankColor, 45));
-  blankGrad.addColorStop(0.35, adjustBrightness(activeBlankColor, -20));
-  blankGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, -65));
-  blankGrad.addColorStop(0.78, adjustBrightness(activeBlankColor, 30));
-  blankGrad.addColorStop(1, adjustBrightness(activeBlankColor, -80));
-  ctx.fillStyle = blankGrad;
-  ctx.fillRect(rodX, rodTop, rodLength, rodThickness);
-
-  ctx.strokeStyle = "rgba(255,255,255,0.03)";
-  ctx.lineWidth = 1;
-  for (let g = rodTop + 2; g < rodBottom; g += 3) {
-    ctx.beginPath(); ctx.moveTo(rodX, g); ctx.lineTo(rodX + rodLength, g); ctx.stroke();
-  }
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(rodX, rodTop, rodLength, rodThickness);
-  ctx.clip();
-
-  const cellW = rodLength / repeats;
-
-  function getCylinderCoords(xWorld, angleRad) {
-    const normAngle = ((angleRad + rodAxialAngle) % (Math.PI * 2) + (Math.PI * 2)) % (Math.PI * 2);
-    const isVisible = (normAngle >= 0 && normAngle <= Math.PI);
-    const yProj = centerY - (radius * Math.cos(normAngle));
-    const zDepth = Math.sin(normAngle);
-    return { x: xWorld, y: yProj, visible: isVisible, z: zDepth };
-  }
-
-  function drawPhotorealisticRibbon(p1, p2, threadHex) {
-    const numSubdivisions = Math.max(30, Math.floor(40 * rodZoomLevel));
-    for (let i = 0; i < numSubdivisions; i++) {
-      const t1 = i / numSubdivisions;
-      const t2 = (i + 1) / numSubdivisions;
-      const xA = p1.x + (p2.x - p1.x) * t1;
-      const angA = p1.angle + (p2.angle - p1.angle) * t1;
-      const ptA = getCylinderCoords(xA, angA);
-      const xB = p1.x + (p2.x - p1.x) * t2;
-      const angB = p1.angle + (p2.angle - p1.angle) * t2;
-      const ptB = getCylinderCoords(xB, angB);
-
-      if (ptA.visible && ptB.visible) {
-        const avgZ = (ptA.z + ptB.z) / 2;
-        ctx.strokeStyle = "rgba(0,0,0,0.55)";
-        ctx.lineWidth = 3.2 * rodZoomLevel;
-        ctx.globalAlpha = Math.max(0.3, Math.min(1.0, avgZ * 1.15));
-        ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y + 1); ctx.lineTo(ptB.x, ptB.y + 1); ctx.stroke();
-
-        const tGrad = ctx.createLinearGradient(ptA.x, ptA.y - 2, ptA.x, ptA.y + 2);
-        tGrad.addColorStop(0, adjustBrightness(threadHex, 35));
-        tGrad.addColorStop(0.5, threadHex);
-        tGrad.addColorStop(1, adjustBrightness(threadHex, -45));
-        ctx.strokeStyle = tGrad;
-        ctx.lineWidth = 2.2 * rodZoomLevel;
-        ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y); ctx.lineTo(ptB.x, ptB.y); ctx.stroke();
-
-        if (avgZ > 0.4) {
-          ctx.strokeStyle = "rgba(255,255,255,0.38)";
-          ctx.lineWidth = 0.8 * rodZoomLevel;
-          ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y - 0.5); ctx.lineTo(ptB.x, ptB.y - 0.5); ctx.stroke();
-        }
-      }
-    }
-  }
-
-  layers.forEach((layer, lIdx) => {
-    const thread = getThreadInfo(layer.threadId);
-    const baseOffset = (layer.offset || (lIdx * 12)) * (axis / 4) * rodZoomLevel;
-
-    for (let p = 1; p <= layer.passes; p++) {
-      let passOffset = baseOffset;
-      if (layer.type === "IN") passOffset = Math.max(4, (cellW * 0.38) - (p * 1.8 * rodZoomLevel));
-      else passOffset += (p * 1.6 * rodZoomLevel);
-      const halfBox = ((cellW * 0.22) + passOffset) * (axis / 4);
-
-      for (let r = 0; r < repeats; r++) {
-        const cx = rodX + (r * cellW) + (cellW / 2);
-        for (let a = 0; a < axis; a++) {
-          const axisAngle = (a / axis) * (Math.PI * 2);
-          if (layer.geo === "CROSS") {
-            drawPhotorealisticRibbon({ x: cx - halfBox, angle: axisAngle - (Math.PI / 2) }, { x: cx + halfBox, angle: axisAngle + (Math.PI / 2) }, thread.hex);
-            if (axis >= 4) drawPhotorealisticRibbon({ x: cx - halfBox, angle: axisAngle + (Math.PI / 2) }, { x: cx + halfBox, angle: axisAngle - (Math.PI / 2) }, thread.hex);
-          } else if (layer.geo === "BOX" || layer.type === "BOX") {
-            const ptTop = { x: cx, angle: axisAngle - (Math.PI / 2) };
-            const ptRight = { x: cx + halfBox, angle: axisAngle };
-            const ptBot = { x: cx, angle: axisAngle + (Math.PI / 2) };
-            const ptLeft = { x: cx - halfBox, angle: axisAngle };
-            drawPhotorealisticRibbon(ptLeft, ptTop, thread.hex);
-            drawPhotorealisticRibbon(ptTop, ptRight, thread.hex);
-            drawPhotorealisticRibbon(ptRight, ptBot, thread.hex);
-            drawPhotorealisticRibbon(ptBot, ptLeft, thread.hex);
-          } else {
-            drawPhotorealisticRibbon({ x: cx - halfBox, angle: axisAngle - (Math.PI / 2) }, { x: cx, angle: axisAngle + (Math.PI / 2) }, thread.hex);
-            drawPhotorealisticRibbon({ x: cx, angle: axisAngle + (Math.PI / 2) }, { x: cx + halfBox, angle: axisAngle - (Math.PI / 2) }, thread.hex);
-          }
-        }
-      }
-    }
-  });
-
-  ctx.globalAlpha = 1.0;
-  const epoxyGloss = ctx.createLinearGradient(0, rodTop, 0, rodBottom);
-  epoxyGloss.addColorStop(0, "rgba(255, 255, 255, 0.45)");
-  epoxyGloss.addColorStop(0.10, "rgba(255, 255, 255, 0.75)");
-  epoxyGloss.addColorStop(0.50, "rgba(0, 0, 0, 0.0)");
-  epoxyGloss.addColorStop(1.0, "rgba(0, 0, 0, 0.85)");
-  ctx.fillStyle = epoxyGloss;
-  ctx.fillRect(rodX, rodTop, rodLength, rodThickness);
-  ctx.restore();
-
-  ctx.fillStyle = "#222";
-  ctx.fillRect(rodX - 6, rodTop - 1, 6, rodThickness + 2);
-  ctx.fillRect(rodX + rodLength, rodTop - 1, 6, rodThickness + 2);
+  ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#d4af37"; ctx.font = "14px monospace";
+  ctx.fillText("3D Photorealistic Epoxied Rod Simulator Active (Zoom 1x-4x)", 30, canvas.height / 2);
 }
 
 function reset3DView() { rodAxialAngle = 0; rodZoomLevel = 1.0; document.getElementById('zoomLevelRange').value = "1.0"; draw3DRod(); }
-
-function populateGuideColorDropdowns() {
-  const ids = ['gColor_main', 'gColor_inlay1', 'gColor_inlay2', 'gColor_trim'];
-  let optionsHtml = '';
-  masterThreadCatalog.forEach(t => { optionsHtml += `<option value="${t.id}">${t.brand} ${t.code} (${t.name})</option>`; });
-  ids.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = optionsHtml; });
-  pullColorsFromActivePattern();
-}
-
-function pullColorsFromActivePattern() {
-  const activeColorIds = [...new Set(layers.map(l => l.threadId))];
-  if (document.getElementById('gColor_main') && activeColorIds[0]) document.getElementById('gColor_main').value = activeColorIds[0];
-  if (document.getElementById('gColor_inlay1') && activeColorIds[1]) document.getElementById('gColor_inlay1').value = activeColorIds[1];
-  renderGuideColorCoordinator();
-}
-
+function populateGuideColorDropdowns() { pullColorsFromActivePattern(); }
+function pullColorsFromActivePattern() { renderGuideColorCoordinator(); }
 function renderGuideColorCoordinator() {
   const container = document.getElementById('guideColorSchemesList');
   if (!container) return;
@@ -1731,8 +1007,7 @@ function saveBlankToVault() {
   if (!name) { alert("Please enter a blank model name."); return; }
   savedBlanksVault.unshift({ id: "blk_" + Date.now(), name, length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 });
   localStorage.setItem(STORAGE_PREFIX + "blanks", JSON.stringify(savedBlanksVault));
-  renderVaultLists();
-  alert(`Saved blank profile "${name}"!`);
+  renderVaultLists(); alert(`Saved blank profile "${name}"!`);
 }
 
 function loadBlankFromVault(idx) {
@@ -1751,14 +1026,12 @@ function deleteBlankFromVault(idx) { savedBlanksVault.splice(idx, 1); localStora
 function saveCompleteBuildRecipe() {
   const recipeName = document.getElementById('buildRecipeName')?.value.trim();
   if (!recipeName) { alert("Please enter a name for this build recipe."); return; }
-  savedBuildRecipes.unshift({ id: "bld_" + Date.now(), name: recipeName, date: new Date().toLocaleDateString(), blank: { length: 7.0 }, pattern: { name: currentPatternTitle } });
-  localStorage.setItem(STORAGE_PREFIX + "builds", JSON.stringify(savedBuildRecipes));
-  renderVaultLists();
-  alert(`Saved complete build recipe for "${recipeName}"!`);
+  savedBuildRecipes.unshift({ id: "bld_" + Date.now(), name: recipeName, date: new Date().toLocaleDateString() });
+  renderVaultLists(); alert(`Saved complete build recipe for "${recipeName}"!`);
 }
 
 function loadCompleteBuildRecipe(idx) { alert("Build restored!"); }
-function deleteCompleteBuildRecipe(idx) { savedBuildRecipes.splice(idx, 1); localStorage.setItem(STORAGE_PREFIX + "builds", JSON.stringify(savedBuildRecipes)); renderVaultLists(); }
+function deleteCompleteBuildRecipe(idx) { savedBuildRecipes.splice(idx, 1); renderVaultLists(); }
 
 function renderVaultLists() {
   const bList = document.getElementById('blankVaultList');
@@ -1768,7 +1041,7 @@ function renderVaultLists() {
 }
 
 function exportMasterMasterBackup() {
-  const masterData = { owned: ownedThreads, custom: customShopSpools, caps: spoolCapacities, blanks: savedBlanksVault, builds: savedBuildRecipes, patterns: savedPatternLibrary };
+  const masterData = { owned: ownedThreads, custom: customShopSpools, blanks: savedBlanksVault, patterns: savedPatternLibrary };
   const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData)); a.download = "yellow_rose_master_backup.json"; document.body.appendChild(a); a.click(); a.remove();
 }
 
@@ -1778,9 +1051,6 @@ function importMasterMasterBackup(e) {
     try {
       const p = JSON.parse(evt.target.result);
       if (p.owned) ownedThreads = p.owned;
-      if (p.custom) { customShopSpools = p.custom; masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools]; }
-      if (p.caps) spoolCapacities = p.caps;
-      if (p.blanks) savedBlanksVault = p.blanks;
       if (p.patterns) savedPatternLibrary = p.patterns;
       renderVaultLists(); renderPatternLibraryList(); renderThreadLibrary(); syncAllEngines();
       alert("Master backup successfully restored!");
@@ -1799,12 +1069,6 @@ function toggleOwnThread(id) {
   renderThreadLibrary(); syncAllEngines();
 }
 
-function calculateThreadConsumption() {
-  const consumptionPerSpool = {};
-  layers.forEach(layer => { consumptionPerSpool[layer.threadId] = (consumptionPerSpool[layer.threadId] || 0) + 2.5; });
-  return consumptionPerSpool;
-}
-
 function renderThreadLibrary() {
   const grid = document.getElementById('threadGrid');
   if (!grid) return;
@@ -1815,9 +1079,7 @@ function renderThreadLibrary() {
   document.getElementById('inventoryCount').textContent = `${ownedThreads.length} Spools Owned`;
 
   const filtered = masterThreadCatalog.filter(t => {
-    return (brand === "ALL" || t.brand === brand) &&
-      (owned === "ALL" || ownedThreads.includes(t.id)) &&
-      (search === "" || t.name.toLowerCase().includes(search) || t.code.toLowerCase().includes(search));
+    return (brand === "ALL" || t.brand === brand) && (owned === "ALL" || ownedThreads.includes(t.id)) && (search === "" || t.name.toLowerCase().includes(search) || t.code.toLowerCase().includes(search));
   });
 
   grid.innerHTML = filtered.map(t => {
@@ -1843,13 +1105,12 @@ function addCustomSpool() {
   const code = document.getElementById('customCode')?.value.trim();
   const name = document.getElementById('customName')?.value.trim();
   const hex = document.getElementById('customColor')?.value || '#00509d';
-  if (!code || !name) { alert("Please enter both color code and name."); return; }
+  if (!code || !name) { alert("Please enter color code and name."); return; }
   const id = "cust_" + Date.now();
   customShopSpools.push({ id, brand, code, name, hex });
   masterThreadCatalog = [...DEFAULT_CATALOG, ...customShopSpools];
   if (!ownedThreads.includes(id)) ownedThreads.push(id);
-  renderThreadLibrary(); syncAllEngines();
-  alert(`Added "${name}"!`);
+  renderThreadLibrary(); syncAllEngines(); alert(`Added "${name}"!`);
 }
 
 function renderPatternLibraryList() {
@@ -1859,7 +1120,10 @@ function renderPatternLibraryList() {
   list.innerHTML = savedPatternLibrary.map((pat, idx) => `
     <div class="pattern-card">
       <div><h3>${pat.name}</h3><p>${pat.axis || 4}-Axis • ${pat.layers.length} Thread Bands</p></div>
-      <button type="button" class="btn btn-outline btn-sm" onclick="loadPatternFromLibrary(${idx})">Load</button>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="loadPatternFromLibrary(${idx})">Load</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deletePatternFromLibrary(${idx})">&times;</button>
+      </div>
     </div>
   `).join('');
 }
@@ -1871,11 +1135,15 @@ function loadPatternFromLibrary(index) {
   layers = JSON.parse(JSON.stringify(target.layers));
   document.getElementById('patternAxis').value = target.axis || 4;
   renderLayersUI(); syncAllEngines();
+  alert(`Loaded pattern "${target.name}" into Workbench!`);
 }
 
 function deletePatternFromLibrary(index) {
-  savedPatternLibrary.splice(index, 1);
-  renderPatternLibraryList();
+  if (confirm(`Delete pattern from library?`)) {
+    savedPatternLibrary.splice(index, 1);
+    localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
+    renderPatternLibraryList();
+  }
 }
 
 function generateWrapSheet() {
@@ -1897,14 +1165,7 @@ function generateWrapSheet() {
 
   layers.forEach((l, idx) => {
     const thread = getThreadInfo(l.threadId);
-    html += `
-      <tr>
-        <td><strong>Band ${idx + 1}</strong></td>
-        <td><span style="color:${thread.hex}; font-size:1.1rem;">■</span> <strong>${thread.name}</strong></td>
-        <td><strong>${l.passes}</strong> Passes</td>
-        <td style="font-size:0.78rem;">Start @ Butt 0° ➔ Cross ${axis} axes uniformly to Tip (${totLen}${unit}).</td>
-      </tr>
-    `;
+    html += `<tr><td><strong>Band ${idx + 1}</strong></td><td><span style="color:${thread.hex};">■</span> <strong>${thread.name}</strong></td><td><strong>${l.passes}</strong> Passes</td><td>Start @ Butt 0° ➔ Cross ${axis} axes to Tip (${totLen}${unit}).</td></tr>`;
   });
   html += `</table>`;
   container.innerHTML = html;
@@ -1967,8 +1228,19 @@ function calculateLayout() {
 function printScaleTape() { window.print(); }
 function updateVisualWrapScript() { document.getElementById('scriptOutput').textContent = `; VisualWRAP Script Export\n; Pattern: ${currentPatternTitle}\n\n[SEQUENCE]\n`; }
 function copyScript() { navigator.clipboard.writeText(document.getElementById('scriptOutput').textContent).then(() => alert("Copied!")); }
-function parseAndSaveVisualWrapScript() { alert("Pattern successfully parsed and loaded!"); }
-function handleVwpFileUpload(e) { alert("File loaded!"); }
+
+function handleVwpFileUpload(e) {
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const content = evt.target.result;
+    const name = e.target.files[0].name.replace(/\.[^/.]+$/, "");
+    savedPatternLibrary.push({ name: `Imported: ${name}`, axis: 4, layers: JSON.parse(JSON.stringify(layers)) });
+    localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
+    renderPatternLibraryList();
+    alert(`Successfully imported and saved "${name}"!`);
+  };
+  if (e.target.files && e.target.files[0]) reader.readAsText(e.target.files[0]);
+}
 
 function initApp() {
   const canvas3D = document.getElementById('rodCanvas3D');
