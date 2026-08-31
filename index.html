@@ -187,19 +187,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Industry Presets</label>
-            <select id="quickPreset" onchange="applyQuickPreset(this.value)">
-              <option value="diamond" selected>4-Color Traditional Diamond</option>
-              <option value="stJohns">St. John's Cross (3-Tone)</option>
-              <option value="maltese">Maltese Cross (Interlocking)</option>
-              <option value="nordic">Nordic Split-Cross</option>
-              <option value="chevron">Classic Chevron Fade</option>
-              <option value="spider">8-Axis Spider Star</option>
-              <option value="hexStar">6-Axis Hexagonal Star</option>
-              <option value="shark">Shark Tooth Wrap</option>
-              <option value="celtic">Celtic Interlocking Weave</option>
-              <option value="cube">3D Cube Optical Block</option>
-            </select>
+            <label>Saved Library Presets</label>
+            <select id="quickPreset" onchange="applyQuickPreset(this.value)"></select>
           </div>
         </div>
 
@@ -312,7 +301,7 @@
 
       <div class="tool-item" style="margin-left: auto;">
         <label>Winding Speed:</label>
-        <input type="range" id="animSpeed" min="1" max="10" value="2" style="width: 100px; cursor: pointer;" title="1 = Ultra-Slow Crawl (30s+), 10 = Fast" />
+        <input type="range" id="animSpeed" min="1" max="10" value="2" style="width: 100px; cursor: pointer;" />
       </div>
     </div>
 
@@ -353,103 +342,50 @@
       <span>🎨 Custom Guide Wrap Color Selector</span>
       <button type="button" class="btn btn-outline btn-sm" onclick="pullColorsFromActivePattern()">🔄 Pull from Active Wrap Pattern</button>
     </h2>
-    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
-      Customize the exact thread colors for your guide feet. The demo previews and step-by-step winding recipes will update automatically:
-    </p>
     <div class="row-4">
-      <div class="form-group">
-        <label>Main Body (Base)</label>
-        <select id="gColor_main" onchange="renderGuideColorCoordinator()"></select>
-      </div>
-      <div class="form-group">
-        <label>Primary Inlay / Pinline</label>
-        <select id="gColor_inlay1" onchange="renderGuideColorCoordinator()"></select>
-      </div>
-      <div class="form-group">
-        <label>Secondary Center Accent</label>
-        <select id="gColor_inlay2" onchange="renderGuideColorCoordinator()"></select>
-      </div>
-      <div class="form-group">
-        <label>Tip-Off Trim Ring</label>
-        <select id="gColor_trim" onchange="renderGuideColorCoordinator()"></select>
-      </div>
+      <div class="form-group"><label>Main Body (Base)</label><select id="gColor_main" onchange="renderGuideColorCoordinator()"></select></div>
+      <div class="form-group"><label>Primary Inlay</label><select id="gColor_inlay1" onchange="renderGuideColorCoordinator()"></select></div>
+      <div class="form-group"><label>Secondary Accent</label><select id="gColor_inlay2" onchange="renderGuideColorCoordinator()"></select></div>
+      <div class="form-group"><label>Tip-Off Trim</label><select id="gColor_trim" onchange="renderGuideColorCoordinator()"></select></div>
     </div>
   </div>
-
-  <div class="card">
-    <h2>Guide Wrap Styles & Live Winding Recipes</h2>
-    <div id="guideColorSchemesList"></div>
-  </div>
+  <div class="card"><h2>Guide Wrap Styles & Live Winding Recipes</h2><div id="guideColorSchemesList"></div></div>
 </div>
 
 <!-- TAB 5: ROD BLANK & MASTER VAULT -->
 <div id="panel-vault" class="tab-panel">
   <div style="background:#131824; border:1px solid var(--accent-gold); border-radius:8px; padding:14px; margin-bottom:16px;">
     <h3 style="color:var(--accent-gold); font-size:1rem; margin-bottom:4px;">🛡️ Master Shop Backup & Restore Center</h3>
-    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
-      Backs up your <strong>entire application state</strong> into one file: Thread Inventory, Custom Spools, Spool Yardages, Saved Blank Profiles, Complete Build Recipes, and Saved Patterns.
-    </p>
     <div style="display:flex; flex-wrap:wrap; gap:8px;">
       <button type="button" class="btn btn-sm" onclick="exportMasterMasterBackup()">💾 Download Master Backup File (.json)</button>
       <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('importMasterFile').click()">📂 Restore from Master Backup</button>
       <input type="file" id="importMasterFile" style="display:none;" accept=".json" onchange="importMasterMasterBackup(event)" />
     </div>
   </div>
-
   <div class="grid-layout">
     <div>
       <div class="card">
         <h2>💾 Save Blank Dimensions</h2>
-        <div class="form-group">
-          <label>Blank Model / Series Name</label>
-          <input type="text" id="blankModelName" placeholder="e.g., A.R.W. MB842 CarbonOne" />
+        <div class="form-group"><label>Blank Model Name</label><input type="text" id="blankModelName" placeholder="e.g., A.R.W. MB842 CarbonOne" /></div>
+        <div class="row-2">
+          <div class="form-group"><label>Length (ft)</label><input type="number" id="blankVaultLen" value="7.0" step="0.5" /></div>
+          <div class="form-group"><label>Guide Count</label><input type="number" id="blankVaultGuides" value="9" /></div>
         </div>
         <div class="row-2">
-          <div class="form-group">
-            <label>Length (ft)</label>
-            <input type="number" id="blankVaultLen" value="7.0" step="0.5" />
-          </div>
-          <div class="form-group">
-            <label>Guide Count</label>
-            <input type="number" id="blankVaultGuides" value="9" />
-          </div>
-        </div>
-        <div class="row-2">
-          <div class="form-group">
-            <label>Butt O.D. (in)</label>
-            <input type="number" id="blankVaultButt" value="0.520" step="0.005" />
-          </div>
-          <div class="form-group">
-            <label>Tip O.D. (in)</label>
-            <input type="number" id="blankVaultTip" value="0.410" step="0.005" />
-          </div>
+          <div class="form-group"><label>Butt O.D. (in)</label><input type="number" id="blankVaultButt" value="0.520" step="0.005" /></div>
+          <div class="form-group"><label>Tip O.D. (in)</label><input type="number" id="blankVaultTip" value="0.410" step="0.005" /></div>
         </div>
         <button type="button" class="btn" onclick="saveBlankToVault()">💾 Save Blank Profile</button>
       </div>
-
-      <div class="card">
-        <h2>📋 Saved Blank Profiles</h2>
-        <div id="blankVaultList"></div>
-      </div>
+      <div class="card"><h2>📋 Saved Blank Profiles</h2><div id="blankVaultList"></div></div>
     </div>
-
     <div>
       <div class="card">
-        <h2>🏆 Save Complete Rod Build Recipe</h2>
-        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
-          Saves the entire project snapshot: Rod blank dimensions, active decorative thread pattern, exact color bands, guide spacing, and guide wrap colorway.
-        </p>
-        <div class="form-group">
-          <label>Build Recipe / Customer Name</label>
-          <input type="text" id="buildRecipeName" placeholder="e.g., Texas Inshore 7'0 MB842 - Custom Teal/Gold" />
-        </div>
+        <h2>🏆 Save Complete Build Recipe</h2>
+        <div class="form-group"><label>Build Recipe / Customer Name</label><input type="text" id="buildRecipeName" placeholder="e.g., Texas Inshore 7'0 MB842" /></div>
         <button type="button" class="btn" onclick="saveCompleteBuildRecipe()">💾 Snapshot & Save Complete Build</button>
       </div>
-
-      <div class="card">
-        <h2>🗃️ Completed Build Recipes Vault</h2>
-        <div id="buildRecipeList"></div>
-      </div>
+      <div class="card"><h2>🗃️ Completed Build Recipes Vault</h2><div id="buildRecipeList"></div></div>
     </div>
   </div>
 </div>
@@ -457,10 +393,7 @@
 <!-- TAB 6: WRAP INSTRUCTION SHEET -->
 <div id="panel-sheet" class="tab-panel">
   <div class="card">
-    <h2>
-      <span>📋 Complete Rod Builder Sequence & Waypoint Route Guide</span>
-      <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨 Print Wrap Sheet</button>
-    </h2>
+    <h2><span>📋 Complete Rod Builder Sequence & Waypoint Route Guide</span><button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨 Print Wrap Sheet</button></h2>
     <div id="wrapSheetContent"></div>
   </div>
 </div>
@@ -471,50 +404,19 @@
     <div class="card">
       <h2>🎣 Custom Guide Layout Settings</h2>
       <div class="row-2">
-        <div class="form-group">
-          <label>Rod Length</label>
-          <input type="number" id="rodTotalLength" value="7.0" step="0.5" oninput="calculateGuideSpacing()" />
-        </div>
-        <div class="form-group">
-          <label>Length Unit</label>
-          <select id="guideLengthUnit" onchange="calculateGuideSpacing()">
-            <option value="ft" selected>Feet (ft)</option>
-            <option value="in">Inches (in)</option>
-            <option value="mm">mm</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Rod Length</label><input type="number" id="rodTotalLength" value="7.0" step="0.5" oninput="calculateGuideSpacing()" /></div>
+        <div class="form-group"><label>Length Unit</label><select id="guideLengthUnit" onchange="calculateGuideSpacing()"><option value="ft" selected>Feet (ft)</option><option value="in">Inches (in)</option><option value="mm">mm</option></select></div>
       </div>
       <div class="row-2">
-        <div class="form-group">
-          <label>Guide Count (Excluding Tip)</label>
-          <input type="number" id="totalGuides" value="9" min="5" max="15" oninput="calculateGuideSpacing()" />
-        </div>
-        <div class="form-group">
-          <label>Wrap Style</label>
-          <select id="guideWrapStyle" onchange="calculateGuideSpacing()">
-            <option value="SPIRAL_SIMPLE" selected>Spiral Acid Wrap (Simple 0°-180° Bumper)</option>
-            <option value="SPIRAL_PROGRESSIVE">Spiral Acid Wrap (0°-60°-120°-180°)</option>
-            <option value="CASTING_STD">Traditional Casting (Top 0°)</option>
-            <option value="SPINNING_STD">Traditional Spinning (Bottom 180°)</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Guide Count</label><input type="number" id="totalGuides" value="9" min="5" max="15" oninput="calculateGuideSpacing()" /></div>
+        <div class="form-group"><label>Wrap Style</label><select id="guideWrapStyle" onchange="calculateGuideSpacing()"><option value="SPIRAL_SIMPLE" selected>Spiral Acid Wrap (Simple)</option><option value="SPIRAL_PROGRESSIVE">Spiral Acid Wrap (0°-60°-120°-180°)</option><option value="CASTING_STD">Traditional Casting (Top 0°)</option><option value="SPINNING_STD">Traditional Spinning (Bottom 180°)</option></select></div>
       </div>
       <div class="row-2">
-        <div class="form-group">
-          <label>Distance to Stripper Guide</label>
-          <input type="number" id="distToStripper" value="21.0" step="0.5" oninput="calculateGuideSpacing()" />
-        </div>
-        <div class="form-group">
-          <label>Tip-to-Choker Spacing (Guide 1)</label>
-          <input type="number" id="tipToFirstGuide" value="4.0" step="0.25" oninput="calculateGuideSpacing()" />
-        </div>
+        <div class="form-group"><label>Distance to Stripper</label><input type="number" id="distToStripper" value="21.0" step="0.5" oninput="calculateGuideSpacing()" /></div>
+        <div class="form-group"><label>Tip-to-Choker Spacing</label><input type="number" id="tipToFirstGuide" value="4.0" step="0.25" oninput="calculateGuideSpacing()" /></div>
       </div>
     </div>
-
-    <div class="card">
-      <h2>Guide Spacing & Axial Rotation Table</h2>
-      <div id="guideResults"></div>
-    </div>
+    <div class="card"><h2>Guide Spacing & Axial Rotation Table</h2><div id="guideResults"></div></div>
   </div>
 </div>
 
@@ -523,22 +425,8 @@
   <div class="card">
     <h2>📖 Rod Wrap Terminology & Pattern Glossary</h2>
     <div class="glossary-grid">
-      <div class="glossary-card">
-        <h3>CROSS <span>Geometry</span></h3>
-        <p>Passes where threads travel diagonally from butt to tip across opposing layout axes, crossing at 0°/180° (or 90°/270°) intersections to form traditional diamonds or cross motifs.</p>
-      </div>
-      <div class="glossary-card">
-        <h3>BOX <span>Geometry</span></h3>
-        <p>Sequences where thread passes frame a diamond center or Maltese cross, creating closed square outer borders that isolate patterns and transition into background fill.</p>
-      </div>
-      <div class="glossary-card">
-        <h3>CHEVRON <span>Geometry</span></h3>
-        <p>Unidirectional arrow or V-shape wrapping passes pointing toward the butt or tip of the rod, without closing into reverse intersections.</p>
-      </div>
-      <div class="glossary-card">
-        <h3>OFFSET CROSS <span>Geometry</span></h3>
-        <p>Crosses centered away from the primary 0°/180° intersections, creating split-cross, box-in-box, or multi-point secondary diamond fields.</p>
-      </div>
+      <div class="glossary-card"><h3>CROSS <span>Geometry</span></h3><p>Passes where threads travel diagonally from butt to tip across opposing layout axes.</p></div>
+      <div class="glossary-card"><h3>BOX <span>Geometry</span></h3><p>Sequences where thread passes frame a diamond center or cross.</p></div>
     </div>
   </div>
 </div>
@@ -549,32 +437,16 @@
     <div>
       <div class="card">
         <h2>Import & Save Pattern</h2>
-        
         <div style="background: #05070a; border: 1px dashed var(--accent-gold); border-radius: 6px; padding: 12px; margin-bottom: 14px;">
           <label style="color: var(--accent-gold);">📁 Load .vwp File from Downloads</label>
           <input type="file" id="vwpFileInput" accept=".vwp,.txt" onchange="handleVwpFileUpload(event)" style="padding: 6px; font-size: 0.82rem; cursor: pointer;" />
-          <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Supports all ThreadCentral, VisualWRAP v1/v2, INI, and custom scripts.</p>
         </div>
-
-        <div class="form-group">
-          <label>Pattern Name</label>
-          <input type="text" id="importPatternName" placeholder="e.g., Custom Custom Shop Weave" />
-        </div>
-        <div class="form-group">
-          <label>Save Current Workbench Design as New Pattern</label>
-          <button type="button" class="btn btn-outline btn-sm" onclick="saveCurrentWorkbenchAsPattern()" style="margin-top:4px;">💾 Save Active Layout to Library</button>
-        </div>
+        <div class="form-group"><label>Pattern Name</label><input type="text" id="importPatternName" placeholder="e.g., Custom Weave" /></div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="saveCurrentWorkbenchAsPattern()" style="margin-top:4px;">💾 Save Active Layout to Library</button>
       </div>
     </div>
-
     <div>
-      <div class="card">
-        <h2>
-          <span>Saved Pattern Library</span>
-          <span style="font-size:0.75rem; color:var(--text-muted);" id="patternCount">0 Patterns</span>
-        </h2>
-        <div id="patternLibraryList"></div>
-      </div>
+      <div class="card"><h2><span>Saved Pattern Library</span><span style="font-size:0.75rem; color:var(--text-muted);" id="patternCount">0 Patterns</span></h2><div id="patternLibraryList"></div></div>
     </div>
   </div>
 </div>
@@ -584,72 +456,22 @@
   <div class="card">
     <h2>➕ Add Custom Spool</h2>
     <div class="row-4">
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Brand / Series</label>
-        <input type="text" id="customBrand" placeholder="e.g., Fuji NOCP" />
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Color Code</label>
-        <input type="text" id="customCode" placeholder="e.g., 035 or 908" />
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Color Name</label>
-        <input type="text" id="customName" placeholder="e.g., Blue Metallic" />
-      </div>
+      <div class="form-group" style="margin-bottom:0;"><label>Brand</label><input type="text" id="customBrand" placeholder="Fuji" /></div>
+      <div class="form-group" style="margin-bottom:0;"><label>Code</label><input type="text" id="customCode" placeholder="901" /></div>
+      <div class="form-group" style="margin-bottom:0;"><label>Name</label><input type="text" id="customName" placeholder="Gold" /></div>
       <div style="display:flex; gap:6px; align-items:center;">
-        <div>
-          <label>Swatch</label>
-          <input type="color" id="customColor" value="#00509d" style="width:40px; height:38px; padding:1px; cursor:pointer;" />
-        </div>
-        <button type="button" class="btn btn-sm" onclick="addCustomSpool()" style="height:38px; width:auto; white-space:nowrap;">+ Add</button>
+        <div><label>Swatch</label><input type="color" id="customColor" value="#d4af37" style="width:40px; height:38px; padding:1px; cursor:pointer;" /></div>
+        <button type="button" class="btn btn-sm" onclick="addCustomSpool()" style="height:38px; width:auto;">+ Add</button>
       </div>
     </div>
   </div>
-
   <div class="card">
-    <h2>
-      <span>Full Brand Catalog & Live Spool Remaining Meters (With Manual Override)</span>
-      <span style="font-size:0.75rem; color:var(--text-muted);" id="inventoryCount">0 Spools Owned</span>
-    </h2>
-
-    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border-color);">
-      <button type="button" class="btn btn-outline btn-sm" onclick="exportInventory()">📥 Backup Inventory</button>
-      <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()">📤 Load Backup</button>
-      <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importInventory(event)" />
+    <h2><span>Full Brand Catalog & Live Spool Remaining Meters</span><span style="font-size:0.75rem; color:var(--text-muted);" id="inventoryCount">0 Spools Owned</span></h2>
+    <div class="row-3" style="margin-bottom:12px;">
+      <div class="form-group"><label>Brand Filter</label><select id="brandFilter" onchange="renderThreadLibrary()"><option value="ALL">All Brands</option><option value="Fuji Ultra Poly Metallic">Fuji Metallic</option><option value="ProWrap Metallic">ProWrap</option></select></div>
+      <div class="form-group"><label>View Filter</label><select id="ownedFilter" onchange="renderThreadLibrary()"><option value="ALL">All Spools</option><option value="OWNED">Owned Only</option></select></div>
+      <div class="form-group"><label>Search</label><input type="text" id="threadSearch" placeholder="Search..." oninput="renderThreadLibrary()" /></div>
     </div>
-
-    <div class="row-3">
-      <div class="form-group">
-        <label>Brand Filter</label>
-        <select id="brandFilter" onchange="renderThreadLibrary()">
-          <option value="ALL">All Brands (120+ Spools)</option>
-          <option value="Fuji Ultra Poly">Fuji Ultra Poly Solids</option>
-          <option value="Fuji Ultra Poly NOCP">Fuji Ultra Poly NOCP</option>
-          <option value="Fuji Ultra Poly Metallic">Fuji Ultra Poly Metallic</option>
-          <option value="Fuji Neon Series">Fuji Neon Series</option>
-          <option value="ProWrap Metallic">ProWrap Metallic</option>
-          <option value="ProWrap Color Fast">ProWrap Color Fast</option>
-          <option value="ProWrap Nylon">ProWrap Nylon</option>
-          <option value="Fish Hawk Nylon">Fish Hawk (RodDancer) Nylon</option>
-          <option value="Fish Hawk Opaque">Fish Hawk (RodDancer) Opaque</option>
-          <option value="Gudebrod Heritage">Gudebrod Heritage Classics</option>
-          <option value="Madeira Polyneon">Madeira Polyneon</option>
-          <option value="Custom / Shop Spools">Custom / Shop Spools</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>View Filter</label>
-        <select id="ownedFilter" onchange="renderThreadLibrary()">
-          <option value="ALL">Show All Catalog Spools</option>
-          <option value="OWNED">Show ONLY My Owned Spools</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Search Color / Number</label>
-        <input type="text" id="threadSearch" placeholder="Search 901, 326, 035, Blurple, Teal, Gold..." oninput="renderThreadLibrary()" />
-      </div>
-    </div>
-
     <div class="thread-grid" id="threadGrid"></div>
   </div>
 </div>
@@ -658,65 +480,25 @@
 <div id="panel-lay" class="tab-panel">
   <div class="grid-layout">
     <div class="card">
-      <h2>
-        <span>Blank Taper Settings</span>
-        <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--accent-gold); cursor:pointer; margin-bottom:0;">
-          <input type="checkbox" id="syncWithDesigner" checked onchange="toggleSyncMode(this.checked)" style="width:16px; height:16px;" />
-          🔗 Auto-Sync with Pattern Designer
-        </label>
-      </h2>
+      <h2><span>Blank Taper Settings</span><label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--accent-gold); cursor:pointer; margin-bottom:0;"><input type="checkbox" id="syncWithDesigner" checked onchange="toggleSyncMode(this.checked)" style="width:16px; height:16px;" /> Auto-Sync</label></h2>
       <div class="row-2">
-        <div class="form-group">
-          <label>Units</label>
-          <select id="calcUnit" onchange="calculateLayout()">
-            <option value="in">Inches (in)</option>
-            <option value="mm">mm</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Axis Layout</label>
-          <select id="axisCount" onchange="calculateLayout()">
-            <option value="2">2-Axis (Top / Bottom 180°)</option>
-            <option value="4" selected>4-Axis (0°, 90°, 180°, 270°)</option>
-            <option value="6">6-Axis (Hex 60°)</option>
-            <option value="8">8-Axis (45° Increments)</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Units</label><select id="calcUnit" onchange="calculateLayout()"><option value="in">Inches (in)</option><option value="mm">mm</option></select></div>
+        <div class="form-group"><label>Axis</label><select id="axisCount" onchange="calculateLayout()"><option value="4" selected>4-Axis</option><option value="6">6-Axis</option></select></div>
       </div>
       <div class="row-2">
-        <div class="form-group">
-          <label>Butt Diameter</label>
-          <input type="number" id="buttDiam" value="0.520" step="0.005" oninput="calculateLayout()" />
-        </div>
-        <div class="form-group">
-          <label>Tip Diameter</label>
-          <input type="number" id="tipDiam" value="0.410" step="0.005" oninput="calculateLayout()" />
-        </div>
+        <div class="form-group"><label>Butt O.D.</label><input type="number" id="buttDiam" value="0.520" step="0.005" oninput="calculateLayout()" /></div>
+        <div class="form-group"><label>Tip O.D.</label><input type="number" id="tipDiam" value="0.410" step="0.005" oninput="calculateLayout()" /></div>
       </div>
-      <div class="form-group">
-        <label>Pattern Cross Count (Repeats)</label>
-        <input type="number" id="targetCrosses" value="4" min="1" max="15" oninput="calculateLayout()" />
-      </div>
+      <div class="form-group"><label>Cross Count</label><input type="number" id="targetCrosses" value="4" min="1" max="15" oninput="calculateLayout()" /></div>
       <div id="taperSummaryBadge" style="background:#05070a; border:1px solid var(--border-color); border-radius:6px; padding:10px; font-size:0.8rem; color:var(--accent-gold);"></div>
     </div>
-
-    <div class="card">
-      <h2>
-        <span>Taper Offset Spacing Marks</span>
-        <button type="button" class="btn btn-outline btn-sm" onclick="printScaleTape()">🖨️ Print 1:1 Scale Alignment Tape</button>
-      </h2>
-      <div id="layoutResults"></div>
-    </div>
+    <div class="card"><h2><span>Taper Offset Spacing Marks</span><button type="button" class="btn btn-outline btn-sm" onclick="printScaleTape()">🖨️ Print Tape</button></h2><div id="layoutResults"></div></div>
   </div>
 </div>
 
 <!-- TAB 12: VISUALWRAP EXPORT -->
 <div id="panel-vws" class="tab-panel">
-  <div class="card">
-    <h2>VisualWRAP Formatted Script Export</h2>
-    <pre id="scriptOutput">// Script output...</pre>
-    <button type="button" class="btn" style="margin-top:10px;" onclick="copyScript()">Copy Script to Clipboard</button>
-  </div>
+  <div class="card"><h2>VisualWRAP Formatted Script Export</h2><pre id="scriptOutput">// Script output...</pre><button type="button" class="btn" style="margin-top:10px;" onclick="copyScript()">Copy Script</button></div>
 </div>
 
 <div id="printableTapeArea" style="display:none;"></div>
@@ -725,76 +507,24 @@
 const DEFAULT_CATALOG = [
   { id: "fj_m901", brand: "Fuji Ultra Poly Metallic", code: "901", name: "Gold Metallic", hex: "#CCA43B" },
   { id: "fj_m902", brand: "Fuji Ultra Poly Metallic", code: "902", name: "Silver Metallic", hex: "#D3D3D3" },
-  { id: "fj_m903", brand: "Fuji Ultra Poly Metallic", code: "903", name: "Copper Metallic", hex: "#B87333" },
-  { id: "fj_m904", brand: "Fuji Ultra Poly Metallic", code: "904", name: "Gunmetal Metallic", hex: "#383838" },
   { id: "fj_m905", brand: "Fuji Ultra Poly Metallic", code: "905", name: "Red Metallic", hex: "#9E2A2B" },
-  { id: "fj_m906", brand: "Fuji Ultra Poly Metallic", code: "906", name: "Royal Blue Metallic", hex: "#00308F" },
-  { id: "fj_m907", brand: "Fuji Ultra Poly Metallic", code: "907", name: "Green Metallic", hex: "#1E5631" },
   { id: "fj_m908", brand: "Fuji Ultra Poly Metallic", code: "908", name: "Blue Metallic", hex: "#00509D" },
-  { id: "fj_m909", brand: "Fuji Ultra Poly Metallic", code: "909", name: "Purple Metallic", hex: "#8338EC" },
-  { id: "fj_m024", brand: "Fuji Ultra Poly Metallic", code: "024", name: "Light Blue Metallic", hex: "#3A86FF" },
-  { id: "fj_m027", brand: "Fuji Ultra Poly Metallic", code: "027", name: "Dark Red Metallic", hex: "#660708" },
-  { id: "fj_m029", brand: "Fuji Ultra Poly Metallic", code: "029", name: "Lime Green Metallic", hex: "#52B788" },
-  { id: "fj_m030", brand: "Fuji Ultra Poly Metallic", code: "030", name: "Aqua Metallic", hex: "#00B4D8" },
-  { id: "fj_m031", brand: "Fuji Ultra Poly Metallic", code: "031", name: "Orange Metallic", hex: "#E85D04" },
-  { id: "fj_m032", brand: "Fuji Ultra Poly Metallic", code: "032", name: "Pink Metallic", hex: "#FF4D6D" },
-  { id: "fj_m035", brand: "Fuji Ultra Poly Metallic", code: "035", name: "Teal Metallic", hex: "#00A896" },
-  { id: "fj_m040", brand: "Fuji Ultra Poly Metallic", code: "040", name: "Pale Gold Metallic", hex: "#E5C358" },
-  { id: "fj_503", brand: "Fuji Neon Series", code: "503", name: "Neon Green", hex: "#39FF14" },
-  { id: "fj_504", brand: "Fuji Neon Series", code: "504", name: "Neon Lime", hex: "#CCFF00" },
-  { id: "fj_501", brand: "Fuji Neon Series", code: "501", name: "Neon Orange", hex: "#FF5E00" },
-  { id: "fj_502", brand: "Fuji Neon Series", code: "502", name: "Neon Pink", hex: "#FF1493" },
   { id: "fj_001", brand: "Fuji Ultra Poly", code: "001", name: "White", hex: "#FFFFFF" },
   { id: "fj_002", brand: "Fuji Ultra Poly", code: "002", name: "Black", hex: "#0A0A0A" },
-  { id: "fj_003", brand: "Fuji Ultra Poly", code: "003", name: "Smoke Grey", hex: "#7D8597" },
-  { id: "fj_004", brand: "Fuji Ultra Poly", code: "004", name: "Cobalt Blue", hex: "#004B87" },
-  { id: "fj_005", brand: "Fuji Ultra Poly", code: "005", name: "Royal Blue", hex: "#0056B3" },
-  { id: "fj_006", brand: "Fuji Ultra Poly", code: "006", name: "Red", hex: "#BA181B" },
-  { id: "fj_007", brand: "Fuji Ultra Poly", code: "007", name: "Garnet", hex: "#7B1113" },
-  { id: "fj_008", brand: "Fuji Ultra Poly", code: "008", name: "Green", hex: "#2D6A4F" },
-  { id: "fj_009", brand: "Fuji Ultra Poly", code: "009", name: "Teal", hex: "#007F5F" },
   { id: "fj_014", brand: "Fuji Ultra Poly", code: "014", name: "Purple", hex: "#6A0DAD" },
-  { id: "fj_018", brand: "Fuji Ultra Poly", code: "018", name: "Bright Gold", hex: "#FFD700" },
-  { id: "fj_nop001", brand: "Fuji Ultra Poly NOCP", code: "NOP-001", name: "NOCP White", hex: "#FFFFFF" },
-  { id: "fj_nop002", brand: "Fuji Ultra Poly NOCP", code: "NOP-002", name: "NOCP Black", hex: "#0D0D0D" },
-  { id: "fj_nop004", brand: "Fuji Ultra Poly NOCP", code: "NOP-004", name: "NOCP Cobalt Blue", hex: "#0052A5" },
-  { id: "fj_nop006", brand: "Fuji Ultra Poly NOCP", code: "NOP-006", name: "NOCP Red", hex: "#D90429" },
-  { id: "fj_nop014", brand: "Fuji Ultra Poly NOCP", code: "NOP-014", name: "NOCP Purple", hex: "#7B2CBF" },
-  { id: "fj_nop024", brand: "Fuji Ultra Poly NOCP", code: "NOP-024", name: "Maui Wowie", hex: "#2EC4B6" },
-  { id: "fj_nop041", brand: "Fuji Ultra Poly NOCP", code: "NOP-041", name: "Blurple", hex: "#4B0082" },
-  { id: "fj_nop043", brand: "Fuji Ultra Poly NOCP", code: "NOP-043", name: "Cheddar", hex: "#FFA600" },
-  { id: "pw_9100", brand: "ProWrap Metallic", code: "9100", name: "Yellow Gold", hex: "#E8C838" },
-  { id: "pw_9600", brand: "ProWrap Metallic", code: "9600", name: "Purple Metallic", hex: "#782299" },
-  { id: "pw_9620", brand: "ProWrap Metallic", code: "9620", name: "Gold Metallic", hex: "#D4AF37" },
-  { id: "pw_9630", brand: "ProWrap Metallic", code: "9630", name: "Silver Metallic", hex: "#C0C0C0" },
-  { id: "pw_9650", brand: "ProWrap Metallic", code: "9650", name: "Red Metallic", hex: "#C1121F" },
-  { id: "pw_9660", brand: "ProWrap Metallic", code: "9660", name: "Blue Metallic", hex: "#00509D" },
-  { id: "pw_9680", brand: "ProWrap Metallic", code: "9680", name: "Aqua / Teal Metallic", hex: "#00A896" },
-  { id: "pw_9800", brand: "ProWrap Metallic", code: "9800", name: "Gunmetal Metallic", hex: "#2B2B2B" },
   { id: "pw_440", brand: "ProWrap Color Fast", code: "440", name: "Turquoise", hex: "#00D2FF" },
-  { id: "pw_862", brand: "ProWrap Color Fast", code: "862", name: "Midnight Black", hex: "#111111" },
-  { id: "pw_807", brand: "ProWrap Color Fast", code: "807", name: "Pure White", hex: "#F8F9FA" },
-  { id: "pw_525", brand: "ProWrap Color Fast", code: "525", name: "Cobalt Blue", hex: "#003566" },
-  { id: "pw_322", brand: "ProWrap Color Fast", code: "322", name: "Scarlet Red", hex: "#D90429" },
-  { id: "pw_n01", brand: "ProWrap Nylon", code: "NY-01", name: "Jet Black", hex: "#050505" },
-  { id: "gb_001", brand: "Gudebrod Heritage", code: "#001", name: "Black", hex: "#000000" },
-  { id: "gb_002", brand: "Gudebrod Heritage", code: "#002", name: "White", hex: "#FFFFFF" },
-  { id: "gb_206", brand: "Gudebrod Heritage", code: "#206", name: "Garnet", hex: "#73000A" },
-  { id: "gb_209", brand: "Gudebrod Heritage", code: "#209", name: "Goldenrod", hex: "#D4AF37" },
-  { id: "gb_245", brand: "Gudebrod Heritage", code: "#245", name: "Royal Blue", hex: "#002FA7" },
-  { id: "gb_326", brand: "Gudebrod Heritage", code: "#326", name: "Scarlet", hex: "#E60000" }
+  { id: "pw_9620", brand: "ProWrap Metallic", code: "9620", name: "Gold Metallic", hex: "#D4AF37" }
 ];
 
 const DEFAULT_PATTERNS = [
   { name: "4-Color Traditional Diamond", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 4, type: "OUT" }, { threadId: "fj_014", geo: "BOX", offset: 12, passes: 4, type: "BOX" }, { threadId: "pw_440", geo: "BOX", offset: 24, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 38, passes: 10, type: "OUT" } ] },
-  { name: "St. John's Cross (3-Tone)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 15, passes: 6, type: "IN" }, { threadId: "fj_014", geo: "OFFSET", offset: 28, passes: 6, type: "OUT" } ] },
-  { name: "Maltese Cross (Interlocking)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" }, { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" } ] }
+  { name: "St. John's Cross (3-Tone)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 15, passes: 6, type: "IN" } ] }
 ];
 
-const STORAGE_PREFIX = "tsp_master_v31_";
+const STORAGE_PREFIX = "tsp_master_v32_";
 let customShopSpools = [];
 let masterThreadCatalog = [...DEFAULT_CATALOG];
-let ownedThreads = ["fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908"];
+let ownedThreads = ["fj_m901", "fj_014", "pw_440", "fj_002"];
 let savedBlanksVault = [ { id: "b_arw842", name: "A.R.W. MB842 CarbonOne", length: 7.0, buttD: 0.520, tipD: 0.410, guides: 9 } ];
 let savedBuildRecipes = [];
 let savedPatternLibrary = JSON.parse(JSON.stringify(DEFAULT_PATTERNS));
@@ -847,6 +577,13 @@ function syncAllEngines() {
   calculateLayout();
   renderThreadLibrary();
   renderGuideColorCoordinator();
+  updatePresetDropdown();
+}
+
+function updatePresetDropdown() {
+  const select = document.getElementById('quickPreset');
+  if (!select) return;
+  select.innerHTML = savedPatternLibrary.map((p, idx) => `<option value="${idx}" ${p.name === currentPatternTitle ? 'selected' : ''}>${p.name}</option>`).join('');
 }
 
 function updateScalingIndicators() {
@@ -883,11 +620,11 @@ function updateBlankCustomColor(val) {
   renderStepCanvas(); draw3DRod();
 }
 
-function updateCanvasBg(val) { activeCanvasBg = val; renderStepCanvas(); }
+function updateCanvasBg(val) { activeCanvasBg = val; renderStepCanvas(); draw3DRod(); }
 
-function applyQuickPreset(type) {
-  const map = { diamond: "4-Color Traditional Diamond", stJohns: "St. John's Cross (3-Tone)", maltese: "Maltese Cross (Interlocking)" };
-  const target = savedPatternLibrary.find(p => p.name === map[type]) || DEFAULT_PATTERNS[0];
+function applyQuickPreset(idxVal) {
+  const idx = parseInt(idxVal);
+  const target = savedPatternLibrary[idx] || savedPatternLibrary[0];
   currentPatternTitle = target.name;
   layers = JSON.parse(JSON.stringify(target.layers));
   document.getElementById('patternAxis').value = target.axis || 4;
@@ -938,6 +675,7 @@ function saveCurrentWorkbenchAsPattern() {
   currentPatternTitle = name;
   nameInput.value = '';
   renderPatternLibraryList();
+  updatePresetDropdown();
   alert(`Successfully saved "${name}" to your Pattern Library!`);
 }
 
@@ -964,13 +702,19 @@ function renderPattern() {
 
   const padLeft = 40; const padRight = 20; const plotW = w - padLeft - padRight; const plotH = h - 60; const cellW = plotW / repeats; const centerY = plotH / 2;
 
+  // Draw axis lines
+  ctx.strokeStyle = "rgba(255,255,255,0.08)"; ctx.lineWidth = 1;
+  for (let a = 0; a <= axis; a++) {
+    ctx.beginPath(); ctx.moveTo(padLeft, (plotH / axis) * a); ctx.lineTo(w - padRight, (plotH / axis) * a); ctx.stroke();
+  }
+
   layers.forEach((layer, lIdx) => {
     const thread = getThreadInfo(layer.threadId);
-    ctx.strokeStyle = thread.hex; ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
+    ctx.strokeStyle = thread.hex; ctx.lineWidth = Math.max(2, layer.passes * 0.9);
     ctx.lineCap = "round";
     for (let r = 0; r < repeats; r++) {
       const cx = padLeft + (r * cellW) + (cellW / 2);
-      let halfBox = cellW * 0.25;
+      let halfBox = cellW * 0.3;
       ctx.beginPath();
       if (layer.geo === "CROSS") {
         ctx.moveTo(cx - halfBox, centerY - halfBox); ctx.lineTo(cx + halfBox, centerY + halfBox);
@@ -988,19 +732,27 @@ function renderStepCanvas() {
   const canvas = document.getElementById('stepCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = activeCanvasBg; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  const centerY = canvas.height / 2;
-  ctx.fillStyle = "#1c1f26"; ctx.fillRect(60, centerY - 35, canvas.width - 120, 70);
-  ctx.strokeStyle = "#d4af37"; ctx.lineWidth = 2; ctx.strokeRect(60, centerY - 35, canvas.width - 120, 70);
+  const w = canvas.width; const h = canvas.height;
+  ctx.fillStyle = activeCanvasBg; ctx.fillRect(0, 0, w, h);
 
-  ctx.fillStyle = "#d4af37"; ctx.font = "bold 13px sans-serif";
-  ctx.fillText(currentStepIndex === 0 ? "Workbench Ready: Tap 'Next Thread' below to start wrapping" : `Active Winding Step: ${currentStepIndex} of ${flattenedThreadSteps.length}`, 80, centerY - 10);
-  
-  if (currentStepIndex > 0 && flattenedThreadSteps[currentStepIndex - 1]) {
+  // Rod Blank Render
+  const rodY = h / 2; const rodLen = w - 100;
+  const bGrad = ctx.createLinearGradient(0, rodY - 40, 0, rodY + 40);
+  bGrad.addColorStop(0, adjustBrightness(activeBlankColor, -35));
+  bGrad.addColorStop(0.5, activeBlankColor);
+  bGrad.addColorStop(1, adjustBrightness(activeBlankColor, -55));
+  ctx.fillStyle = bGrad; ctx.fillRect(50, rodY - 25, rodLen, 50);
+
+  // Render Step Status
+  const headEl = document.getElementById('stepHeader');
+  const subEl = document.getElementById('stepSubtext');
+  if (currentStepIndex === 0) {
+    headEl.textContent = `Step 0 of ${flattenedThreadSteps.length}: Workbench Ready`;
+    subEl.textContent = `Tap "Next Thread" below to start stepping through thread passes.`;
+  } else {
     const active = flattenedThreadSteps[currentStepIndex - 1];
-    ctx.fillStyle = "#00ffaa"; ctx.font = "12px sans-serif";
-    ctx.fillText(`Thread: ${active.threadName} (${active.geo})`, 80, centerY + 15);
+    headEl.innerHTML = `<span style="color:${active.color};">■</span> Step ${currentStepIndex} of ${flattenedThreadSteps.length}: ${active.threadName}`;
+    subEl.textContent = `Laying down thread pass for band geometry (${active.geo})`;
   }
 }
 
@@ -1011,17 +763,29 @@ function draw3DRod() {
   const w = canvas.width; const h = canvas.height;
   ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, w, h);
 
+  const rodThickness = 85 * rodZoomLevel; const radius = rodThickness / 2;
+  const rodLen = (w - 100) * rodZoomLevel; const rodX = 50 - ((rodLen - (w - 100)) / 2);
   const rodY = h / 2;
-  const rodLen = w - 100;
-  const blankGrad = ctx.createLinearGradient(0, rodY - 45, 0, rodY + 45);
-  blankGrad.addColorStop(0, "#111"); blankGrad.addColorStop(0.5, "#333"); blankGrad.addColorStop(1, "#050505");
-  ctx.fillStyle = blankGrad; ctx.fillRect(50, rodY - 35, rodLen, 70);
 
-  ctx.strokeStyle = "#d4af37"; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(50, rodY - 35); ctx.lineTo(50 + rodLen, rodY - 35); ctx.stroke();
+  // Carbon Blank Body with Gloss Gradient
+  const blankGrad = ctx.createLinearGradient(0, rodY - radius, 0, rodY + radius);
+  blankGrad.addColorStop(0, adjustBrightness(activeBlankColor, -50));
+  blankGrad.addColorStop(0.2, adjustBrightness(activeBlankColor, 30));
+  blankGrad.addColorStop(0.5, adjustBrightness(activeBlankColor, -60));
+  blankGrad.addColorStop(0.8, adjustBrightness(activeBlankColor, 20));
+  blankGrad.addColorStop(1, adjustBrightness(activeBlankColor, -70));
+  ctx.fillStyle = blankGrad; ctx.fillRect(rodX, rodY - radius, rodLen, rodThickness);
 
-  ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "12px monospace";
-  ctx.fillText(`3D Photorealistic Rod Simulator (${rodZoomLevel.toFixed(1)}x Zoom)`, 60, rodY + 55);
+  // Epoxy Gloss Specular Highlight
+  const epoxyGloss = ctx.createLinearGradient(0, rodY - radius, 0, rodY + radius);
+  epoxyGloss.addColorStop(0, "rgba(255,255,255,0.4)");
+  epoxyGloss.addColorStop(0.15, "rgba(255,255,255,0.7)");
+  epoxyGloss.addColorStop(0.3, "rgba(255,255,255,0.1)");
+  epoxyGloss.addColorStop(1, "rgba(0,0,0,0.8)");
+  ctx.fillStyle = epoxyGloss; ctx.fillRect(rodX, rodY - radius, rodLen, rodThickness);
+
+  ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.font = "11px monospace";
+  ctx.fillText(`3D PHOTOREALISTIC ROD SIMULATOR | ZOOM: ${rodZoomLevel.toFixed(1)}x`, rodX + 15, rodY + radius + 22);
 }
 
 function reset3DView() { rodAxialAngle = 0; rodZoomLevel = 1.0; document.getElementById('zoomLevelRange').value = "1.0"; draw3DRod(); }
@@ -1083,7 +847,7 @@ function importMasterMasterBackup(e) {
       const p = JSON.parse(evt.target.result);
       if (p.owned) ownedThreads = p.owned;
       if (p.patterns) savedPatternLibrary = p.patterns;
-      renderVaultLists(); renderPatternLibraryList(); renderThreadLibrary(); syncAllEngines();
+      renderVaultLists(); renderPatternLibraryList(); renderThreadLibrary(); syncAllEngines(); updatePresetDropdown();
       alert("Master backup successfully restored!");
     } catch (err) { alert("Invalid backup file."); }
   };
@@ -1165,7 +929,7 @@ function loadPatternFromLibrary(index) {
   currentPatternTitle = target.name;
   layers = JSON.parse(JSON.stringify(target.layers));
   document.getElementById('patternAxis').value = target.axis || 4;
-  renderLayersUI(); syncAllEngines();
+  renderLayersUI(); syncAllEngines(); updatePresetDropdown();
   alert(`Loaded pattern "${target.name}" into Workbench!`);
 }
 
@@ -1174,6 +938,7 @@ function deletePatternFromLibrary(index) {
     savedPatternLibrary.splice(index, 1);
     localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
     renderPatternLibraryList();
+    updatePresetDropdown();
   }
 }
 
@@ -1290,6 +1055,7 @@ function handleVwpFileUpload(e) {
     savedPatternLibrary.push({ name: `Imported: ${name}`, axis: 4, layers: JSON.parse(JSON.stringify(layers)) });
     localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
     renderPatternLibraryList();
+    updatePresetDropdown();
     alert(`Successfully imported and saved "${name}"!`);
   };
   if (e.target.files && e.target.files[0]) reader.readAsText(e.target.files[0]);
