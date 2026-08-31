@@ -791,7 +791,7 @@ const DEFAULT_PATTERNS = [
   { name: "Maltese Cross (Interlocking)", axis: 4, layers: [ { threadId: "fj_m901", geo: "CROSS", offset: 0, passes: 6, type: "OUT" }, { threadId: "pw_440", geo: "BOX", offset: 14, passes: 6, type: "BOX" }, { threadId: "fj_014", geo: "BOX", offset: 26, passes: 6, type: "OUT" }, { threadId: "fj_002", geo: "BOX", offset: 40, passes: 10, type: "OUT" } ] }
 ];
 
-const STORAGE_PREFIX = "tsp_master_v30_";
+const STORAGE_PREFIX = "tsp_master_v31_";
 let customShopSpools = [];
 let masterThreadCatalog = [...DEFAULT_CATALOG];
 let ownedThreads = ["fj_m901", "fj_014", "pw_440", "fj_002", "fj_503", "fj_504", "fj_m902", "fj_m908"];
@@ -961,9 +961,9 @@ function renderPattern() {
   const axis = parseInt(document.getElementById('patternAxis')?.value || 4);
   const w = canvas.width; const h = canvas.height;
   ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, w, h);
-  
+
   const padLeft = 40; const padRight = 20; const plotW = w - padLeft - padRight; const plotH = h - 60; const cellW = plotW / repeats; const centerY = plotH / 2;
-  
+
   layers.forEach((layer, lIdx) => {
     const thread = getThreadInfo(layer.threadId);
     ctx.strokeStyle = thread.hex; ctx.lineWidth = Math.max(1.8, layer.passes * 0.9);
@@ -989,17 +989,39 @@ function renderStepCanvas() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = activeCanvasBg; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#d4af37"; ctx.font = "14px sans-serif";
-  ctx.fillText(currentStepIndex === 0 ? "Ready to Wrap - Tap Next" : `Active Step: ${currentStepIndex} of ${flattenedThreadSteps.length}`, 20, 40);
+  
+  const centerY = canvas.height / 2;
+  ctx.fillStyle = "#1c1f26"; ctx.fillRect(60, centerY - 35, canvas.width - 120, 70);
+  ctx.strokeStyle = "#d4af37"; ctx.lineWidth = 2; ctx.strokeRect(60, centerY - 35, canvas.width - 120, 70);
+
+  ctx.fillStyle = "#d4af37"; ctx.font = "bold 13px sans-serif";
+  ctx.fillText(currentStepIndex === 0 ? "Workbench Ready: Tap 'Next Thread' below to start wrapping" : `Active Winding Step: ${currentStepIndex} of ${flattenedThreadSteps.length}`, 80, centerY - 10);
+  
+  if (currentStepIndex > 0 && flattenedThreadSteps[currentStepIndex - 1]) {
+    const active = flattenedThreadSteps[currentStepIndex - 1];
+    ctx.fillStyle = "#00ffaa"; ctx.font = "12px sans-serif";
+    ctx.fillText(`Thread: ${active.threadName} (${active.geo})`, 80, centerY + 15);
+  }
 }
 
 function draw3DRod() {
   const canvas = document.getElementById('rodCanvas3D');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#d4af37"; ctx.font = "14px monospace";
-  ctx.fillText(`3D Epoxied Rod Simulator (${rodZoomLevel.toFixed(1)}x Zoom)`, 30, canvas.height / 2);
+  const w = canvas.width; const h = canvas.height;
+  ctx.fillStyle = "#05070A"; ctx.fillRect(0, 0, w, h);
+
+  const rodY = h / 2;
+  const rodLen = w - 100;
+  const blankGrad = ctx.createLinearGradient(0, rodY - 45, 0, rodY + 45);
+  blankGrad.addColorStop(0, "#111"); blankGrad.addColorStop(0.5, "#333"); blankGrad.addColorStop(1, "#050505");
+  ctx.fillStyle = blankGrad; ctx.fillRect(50, rodY - 35, rodLen, 70);
+
+  ctx.strokeStyle = "#d4af37"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(50, rodY - 35); ctx.lineTo(50 + rodLen, rodY - 35); ctx.stroke();
+
+  ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "12px monospace";
+  ctx.fillText(`3D Photorealistic Rod Simulator (${rodZoomLevel.toFixed(1)}x Zoom)`, 60, rodY + 55);
 }
 
 function reset3DView() { rodAxialAngle = 0; rodZoomLevel = 1.0; document.getElementById('zoomLevelRange').value = "1.0"; draw3DRod(); }
@@ -1264,7 +1286,6 @@ function copyScript() { navigator.clipboard.writeText(document.getElementById('s
 function handleVwpFileUpload(e) {
   const reader = new FileReader();
   reader.onload = function(evt) {
-    const content = evt.target.result;
     const name = e.target.files[0].name.replace(/\.[^/.]+$/, "");
     savedPatternLibrary.push({ name: `Imported: ${name}`, axis: 4, layers: JSON.parse(JSON.stringify(layers)) });
     localStorage.setItem(STORAGE_PREFIX + "pats", JSON.stringify(savedPatternLibrary));
